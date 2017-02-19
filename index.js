@@ -24,14 +24,18 @@ var myterminalCliCompanion = (function () {
         },
 
         showOptions = function () {
+            printHeader();
             printCurrentOptions();
             bindKeyStrokes();
         },
 
+        printHeader = function () {
+            clear();
+            console.log("** myterminal-cli** \n");
+        },
+
         printCurrentOptions = function () {
             var currentCommandBranch = getCurrentCommandBranch();
-
-            clear();
 
             console.log(currentCommandBranch.title, "\n");
             getCurrentCommandOptions().forEach(function (k) {
