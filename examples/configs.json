@@ -1,0 +1,47 @@
+{
+    "title": "All",
+    "commands": {
+        "i": {
+            "title": "Internet",
+            "commands": {
+                "p": {
+                    "title": "Ping",
+                    "task": "ping -c 4",
+                    "params": [
+                        "host"
+                    ]
+                },
+                "s": {
+                    "title": "SSH",
+                    "task": "ssh",
+                    "params": [
+                        "host"
+                    ]
+                }
+            }
+        },
+        "d": {
+            "title": "What's the date",
+            "task": "date"
+        },
+        "s": {
+            "title": "System",
+            "commands": {
+                "s": {
+                    "title": "Shutdown",
+                    "task": "sudo shutdown -t",
+                    "params": [
+                        "time-to-shutdown-in-seconds"
+                    ]
+                },
+                "r": {
+                    "title": "Reboot",
+                    "task": "sudo reboot -t",
+                    "params": [
+                        "time-to-reboot-in-seconds"
+                    ]
+                }
+            }
+        }
+    }
+}

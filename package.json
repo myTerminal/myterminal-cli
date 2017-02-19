@@ -1,0 +1,38 @@
+{
+  "name": "myterminal",
+  "version": "0.9.0",
+  "description": "An all-day command-line companion",
+  "bin": {
+    "myterminal": "bin/index.js",
+    "myterminal-cli": "bin/index.js"
+  },
+  "scripts": {
+    "install": "node installer.js",
+    "postinstall": "gulp",
+    "develop": "gulp develop"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/myTerminal/myterminal.git"
+  },
+  "bugs": {
+    "url": "https://github.com/myTerminal/myterminal/issues"
+  },
+  "homepage": "https://github.com/myTerminal/myterminal#readme",
+  "keywords": [
+    "git"
+  ],
+  "author": "Mohammed Ismail Ansari <team.terminal@gmail.com>",
+  "license": "GPL-3.0",
+  "preferGlobal": "true",
+  "dependencies": {
+    "clear": "0.0.1",
+    "package-script": "0.0.8",
+    "prompt": "^1.0.0"
+  },
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-uglify": "^2.0.1",
+    "gulp-watch": "^4.3.11"
+  }
+}
