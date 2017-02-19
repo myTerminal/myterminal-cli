@@ -1,6 +1,6 @@
 {
   "name": "myterminal",
-  "version": "0.9.0",
+  "version": "0.9.1",
   "description": "An all-day command-line companion",
   "bin": {
     "myterminal": "bin/index.js",
@@ -8,7 +8,6 @@
   },
   "scripts": {
     "install": "node installer.js",
-    "postinstall": "gulp",
     "develop": "gulp develop"
   },
   "repository": {
