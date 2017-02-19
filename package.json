@@ -7,7 +7,7 @@
     "myterminal-cli": "bin/index.js"
   },
   "scripts": {
-    "install": "node installer.js",
+    "install-globals": "npm install -g gulp-cli",
     "develop": "gulp develop"
   },
   "repository": {
@@ -26,7 +26,6 @@
   "preferGlobal": "true",
   "dependencies": {
     "clear": "0.0.1",
-    "package-script": "0.0.8",
     "prompt": "^1.0.0"
   },
   "devDependencies": {
