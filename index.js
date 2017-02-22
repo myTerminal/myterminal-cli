@@ -23,6 +23,7 @@ var myterminalCliCompanion = (function () {
 
         showOptions = function () {
             printHeader();
+            printBreadCrumbs();
             printCurrentOptions();
             bindKeyStrokes();
         },
@@ -32,10 +33,23 @@ var myterminalCliCompanion = (function () {
             console.log("** myterminal-cli **\n");
         },
 
+        printBreadCrumbs = function () {
+            var breadCrumbs = currentState.map(function (s, i) {
+                return currentState.slice(0, i + 1);
+            }).map(function (s, i) {
+                return s.reduce(function (a, c) {
+                    return a.commands[c];
+                }, configs);
+            }).map(function (s) {
+                return s.title;
+            });
+
+            console.log([configs.title].concat(breadCrumbs).join(" -> ") + "\n");
+        },
+
         printCurrentOptions = function () {
             var currentCommandBranch = getCurrentCommandBranch();
 
-            console.log(currentCommandBranch.title, "\n");
             getCurrentCommandOptions().forEach(function (k) {
                 console.log(k + ": " + currentCommandBranch.commands[k]["title"]);
             });
