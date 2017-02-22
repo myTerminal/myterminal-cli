@@ -13,9 +13,7 @@ var path = require("path"),
     configs = require(configFilePath);
 
 var myterminalCliCompanion = (function () {
-    var self = this,
-
-        configs,
+    var configs,
 
         currentState = [],
 
@@ -31,7 +29,7 @@ var myterminalCliCompanion = (function () {
 
         printHeader = function () {
             clear();
-            console.log("** myterminal-cli** \n");
+            console.log("** myterminal-cli **\n");
         },
 
         printCurrentOptions = function () {
