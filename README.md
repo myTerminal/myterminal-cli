@@ -35,6 +35,8 @@ Run `myterminal-cli` or simply `myterminal` from the command line passing it a p
 
 *myterminal* will start and the rest should be simple.
 
+You can also start *myterminal* without supplying the configuration file path, provided you have placed the configuration file at your home (~/) directory.
+
 ## Dependencies
 
 * prompt

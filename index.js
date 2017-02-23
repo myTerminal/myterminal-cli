@@ -3,14 +3,13 @@
 /* global require module process */
 
 var path = require("path"),
+    os = require("os"),
     stdin = process.stdin,
     execSync = require("child_process").execSync,
     clear = require("clear"),
     prompt = require("prompt"),
     args = process.argv,
-    configFileRelativePath = args[2],
-    configFilePath = path.resolve(process.cwd(), configFileRelativePath),
-    configs = require(configFilePath);
+    suppliedRelativeConfigPath = args[2];
 
 var myterminalCliCompanion = (function () {
     var configs,
@@ -181,5 +180,9 @@ var myterminalCliCompanion = (function () {
 prompt.message = "Enter the value for ";
 prompt.delimiter = "";
 
-myterminalCliCompanion.setConfigs(configs);
+var absoluteConfigPath = suppliedRelativeConfigPath
+    ? path.resolve(process.cwd(), suppliedRelativeConfigPath)
+    : path.resolve(os.homedir(), "myterminal-configs.json");
+
+myterminalCliCompanion.setConfigs(require(absoluteConfigPath));
 myterminalCliCompanion.showOptions();
