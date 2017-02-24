@@ -1,6 +1,6 @@
 {
   "name": "myterminal",
-  "version": "0.9.5",
+  "version": "0.9.6",
   "description": "An all-day command-line companion",
   "bin": {
     "myterminal": "bin/index.js",
@@ -26,6 +26,7 @@
   "preferGlobal": "true",
   "dependencies": {
     "clear": "0.0.1",
+    "fs-extra": "^2.0.0",
     "prompt": "^1.0.0"
   },
   "devDependencies": {

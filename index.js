@@ -8,13 +8,22 @@ var path = require("path"),
     execSync = require("child_process").execSync,
     clear = require("clear"),
     prompt = require("prompt"),
+    fse = require("fs-extra"),
     args = process.argv,
-    suppliedRelativeConfigPath = args[2];
+    suppliedRelativeConfigPath = args[2],
+    defaultConfigFilePath = path.resolve(os.homedir(), "myterminal-configs.json");
 
 var myterminalCliCompanion = (function () {
     var configs,
 
         currentState = [],
+
+        copyConfigFileIfNotPresent = function () {
+            fse.copySync(path.resolve(__dirname, "../examples/configs.json"),
+                         defaultConfigFilePath, {
+                             overwrite: false
+                         });
+        },
 
         setConfigs = function (data) {
             configs = data;
@@ -170,6 +179,7 @@ var myterminalCliCompanion = (function () {
         };
 
     return {
+        copyConfigFileIfNotPresent: copyConfigFileIfNotPresent,
         setConfigs: setConfigs,
         showNextScreen: showNextScreen
     };
@@ -180,7 +190,8 @@ prompt.delimiter = "";
 
 var absoluteConfigPath = suppliedRelativeConfigPath
     ? path.resolve(process.cwd(), suppliedRelativeConfigPath)
-    : path.resolve(os.homedir(), "myterminal-configs.json");
+    : defaultConfigFilePath;
 
+myterminalCliCompanion.copyConfigFileIfNotPresent();
 myterminalCliCompanion.setConfigs(require(absoluteConfigPath));
 myterminalCliCompanion.showNextScreen();
