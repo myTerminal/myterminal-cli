@@ -6,6 +6,7 @@ var path = require("path"),
     os = require("os"),
     stdin = process.stdin,
     execSync = require("child_process").execSync,
+    version = require("../package.json").version,
     clear = require("clear"),
     prompt = require("prompt"),
     fse = require("fs-extra"),
@@ -42,7 +43,9 @@ var myterminalCliCompanion = (function () {
 
         printHeader = function () {
             clear();
-            console.log("** myterminal-cli **\n");
+            console.log(getSeparator("="));
+            console.log("myterminal-cli v" + version);
+            console.log(getSeparator("=") + "\n");
         },
 
         printBreadCrumbs = function () {
@@ -137,14 +140,25 @@ var myterminalCliCompanion = (function () {
         },
 
         executeCommand = function (command) {
-            console.log("Executing command:", command.title, "\n");
-            console.log("---------------------------------------")
+            console.log(getSeparator("="));
+            console.log("Executing command:", command.title);
+            console.log(getSeparator("="));
 
             if (!command.params) {
                 executeShellCommand(command.task);
             } else {
                 gatherParamsAndExecuteCommand(command);
             }
+        },
+
+        getSeparator = function (char) {
+            return new Array(process.stdout.columns - 1)
+                .join(",")
+                .split(",")
+                .map(function () {
+                    return char;
+                })
+                .join("");
         },
 
         executeShellCommand = function (command) {
@@ -156,7 +170,7 @@ var myterminalCliCompanion = (function () {
                 // Do not need to do anything particular
             }
 
-            console.log("---------------------------------------\n")
+            console.log(getSeparator("-") + "\n");
             bindKeyStrokes();
         },
 
