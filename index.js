@@ -20,11 +20,15 @@ var myterminalCliCompanion = (function () {
             configs = data;
         },
 
+        showNextScreen = function () {
+            showOptions();
+            bindKeyStrokes();
+        },
+
         showOptions = function () {
             printHeader();
             printBreadCrumbs();
             printCurrentOptions();
-            bindKeyStrokes();
         },
 
         printHeader = function () {
@@ -91,25 +95,27 @@ var myterminalCliCompanion = (function () {
             unbindKeyStrokes();
 
             if (key === "\u0003") {
-                process.exit();
+                exit();
             } else if (key === "q") {
                 if (!currentState.length) {
-                    process.exit();
+                    exit();
                 }
+
                 currentState.pop();
-                showOptions();
+                showNextScreen();
             } else if (getCurrentCommandOptions().indexOf(key) > -1) {
                 var selectedCommand = getCommandForOption(key),
                     task = selectedCommand.task;
 
                 if (task) {
+                    showOptions();
                     executeCommand(selectedCommand);
                 } else {
                     currentState.push(key);
-                    showOptions();
+                    showNextScreen();
                 }
             } else {
-                showOptions();
+                showNextScreen();
             }
         },
 
@@ -122,8 +128,8 @@ var myterminalCliCompanion = (function () {
         },
 
         executeCommand = function (command) {
-            clear();
             console.log("Executing command:", command.title, "\n");
+            console.log("---------------------------------------")
 
             if (!command.params) {
                 executeShellCommand(command.task);
@@ -140,22 +146,9 @@ var myterminalCliCompanion = (function () {
             } catch (e) {
                 // Do not need to do anything particular
             }
-            bindKeyStrokesToWait();
-        },
 
-        bindKeyStrokesToWait = function () {
-            console.log("\nDone!\nPress any key to continue...");
-            listenToKeyStrokes();
-            stdin.on("data", keyStrokesToWait);
-        },
-
-        unbindKeyStrokesToWait = function () {
-            stdin.removeListener("data", keyStrokesToWait);
-        },
-
-        keyStrokesToWait = function () {
-            unbindKeyStrokesToWait();
-            showOptions();
+            console.log("---------------------------------------\n")
+            bindKeyStrokes();
         },
 
         gatherParamsAndExecuteCommand = function (command) {
@@ -169,11 +162,16 @@ var myterminalCliCompanion = (function () {
 
                 executeShellCommand(taskToBeExecuted);
             });
+        },
+
+        exit = function () {
+            clear();
+            process.exit();
         };
 
     return {
         setConfigs: setConfigs,
-        showOptions: showOptions
+        showNextScreen: showNextScreen
     };
 })();
 
@@ -185,4 +183,4 @@ var absoluteConfigPath = suppliedRelativeConfigPath
     : path.resolve(os.homedir(), "myterminal-configs.json");
 
 myterminalCliCompanion.setConfigs(require(absoluteConfigPath));
-myterminalCliCompanion.showOptions();
+myterminalCliCompanion.showNextScreen();
