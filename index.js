@@ -7,8 +7,9 @@ var path = require("path"),
     stdin = process.stdin,
     execSync = require("child_process").execSync,
     version = require("../package.json").version,
-    clear = require("clear"),
     prompt = require("prompt"),
+    clear = require("clear"),
+    chalk = require("chalk"),
     fse = require("fs-extra"),
     args = process.argv,
     suppliedRelativeConfigPath = args[2],
@@ -42,10 +43,20 @@ var myterminalCliCompanion = (function () {
         },
 
         printHeader = function () {
+            var centeredTitle = getCenteredText("myterminal-cli v" + version);
+
             clear();
-            console.log(getSeparator("="));
-            console.log("myterminal-cli v" + version);
-            console.log(getSeparator("=") + "\n");
+            console.log(chalk.inverse.cyan(getSeparator(" ")));
+            console.log(chalk.inverse.cyan(centeredTitle));
+            console.log(chalk.inverse.cyan(getSeparator(" ")) + "\n");
+        },
+
+        getCenteredText = function (text) {
+            var fillerSize = getSeparator(" ").length - text.length;
+
+            return getString(" ", Math.floor(fillerSize / 2))
+                + text
+                + getString(" ", Math.ceil(fillerSize / 2));
         },
 
         printBreadCrumbs = function () {
@@ -59,20 +70,20 @@ var myterminalCliCompanion = (function () {
                 return s.title;
             });
 
-            console.log([configs.title].concat(breadCrumbs).join(" -> ") + "\n");
+            console.log(chalk.cyan([configs.title].concat(breadCrumbs).join(" -> ") + "\n"));
         },
 
         printCurrentOptions = function () {
             var currentCommandBranch = getCurrentCommandBranch();
 
             getCurrentCommandOptions().forEach(function (k) {
-                console.log(k + ": " + currentCommandBranch.commands[k]["title"]);
+                console.log(chalk.yellow(k + ": " + currentCommandBranch.commands[k]["title"]));
             });
 
             if (currentCommandBranch !== configs) {
-                console.log("\nq" + ": " + "Go back...\n");
+                console.log(chalk.red("\nq" + ": " + "Go back...") + "\n");
             } else {
-                console.log("\nq" + ": " + "Quit\n");
+                console.log(chalk.red("\nq" + ": " + "Quit") + "\n");
             }
         },
 
@@ -140,9 +151,7 @@ var myterminalCliCompanion = (function () {
         },
 
         executeCommand = function (command) {
-            console.log(getSeparator("="));
-            console.log("Executing command:", command.title);
-            console.log(getSeparator("="));
+            console.log(chalk.inverse.green(getCenteredText("Command: " + command.title)) + "\n");
 
             if (!command.params) {
                 executeShellCommand(command.task);
@@ -161,6 +170,16 @@ var myterminalCliCompanion = (function () {
                 .join("");
         },
 
+        getString = function (char, size) {
+            return new Array(size)
+                .join(",")
+                .split(",")
+                .map(function () {
+                    return char;
+                })
+                .join("");
+        },
+
         executeShellCommand = function (command) {
             try {
                 execSync(command, {
@@ -170,7 +189,7 @@ var myterminalCliCompanion = (function () {
                 // Do not need to do anything particular
             }
 
-            console.log(getSeparator("-") + "\n");
+            console.log("\n" + chalk.green(getSeparator("-")));
             bindKeyStrokes();
         },
 

@@ -41,6 +41,7 @@ You can also start *myterminal* without supplying the configuration file path, i
 
 * prompt
 * clear
+* chalk
 * fs-extra
 
 ## To-do
