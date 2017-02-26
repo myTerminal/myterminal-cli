@@ -77,7 +77,11 @@ var myterminalCliCompanion = (function () {
             var currentCommandBranch = getCurrentCommandBranch();
 
             getCurrentCommandOptions().forEach(function (k) {
-                console.log(chalk.yellow(k + ": " + currentCommandBranch.commands[k]["title"]));
+                if (currentCommandBranch.commands[k].command) {
+                    console.log(chalk.yellow(k + ": " + "[" + currentCommandBranch.commands[k]["title"] + "]"));
+                } else {
+                    console.log(chalk.yellow(k + ": " + currentCommandBranch.commands[k]["title"]));
+                }
             });
 
             if (currentCommandBranch !== configs) {
