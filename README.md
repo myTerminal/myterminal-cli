@@ -17,6 +17,8 @@ An all-day command-line companion
 [![Gratipay](http://img.shields.io/gratipay/myTerminal.svg)](https://gratipay.com/myTerminal)  
 [![NPM](https://nodei.co/npm/myterminal.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/myterminal/)
 
+![Demo](images/demo.gif)
+
 ## What is it?
 
 *myterminal* is designed to be a command-line application that would help you perform repetitive tasks that you do all day long with the press of a single programmable key. It tends to be an interactive command-line interface that you would (hopefully) keep running in a terminal window on your workstation to perform a set of programmed tasks and present them to the user in a nested manner.
