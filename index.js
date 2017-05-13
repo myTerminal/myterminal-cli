@@ -5,7 +5,7 @@
 var path = require("path"),
     os = require("os"),
     stdin = process.stdin,
-    execSync = require("child_process").execSync,
+    spawn = require('child_process').spawn,
     version = require("../package.json").version,
     prompt = require("prompt"),
     clear = require("clear"),
@@ -20,6 +20,8 @@ var myterminalCliCompanion = (function () {
 
         currentState = [],
 
+        currentCommandInstance,
+
         copyConfigFileIfNotPresent = function () {
             fse.copySync(path.resolve(__dirname, "../examples/configs.json"),
                          defaultConfigFilePath, {
@@ -33,7 +35,7 @@ var myterminalCliCompanion = (function () {
 
         showNextScreen = function () {
             showOptions();
-            bindKeyStrokes();
+            bindKeyStrokesToNavigate();
         },
 
         showOptions = function () {
@@ -103,13 +105,22 @@ var myterminalCliCompanion = (function () {
             return Object.keys(getCurrentCommandBranch().commands);
         },
 
-        bindKeyStrokes = function () {
+        bindKeyStrokesToNavigate = function () {
             listenToKeyStrokes();
-            stdin.on("data", keyStrokeHandler);
+            stdin.on("data", keyStrokeHandlerForNavigation);
         },
 
-        unbindKeyStrokes = function () {
-            stdin.removeListener("data", keyStrokeHandler);
+        unbindKeyStrokesToNavigate = function () {
+            stdin.removeListener("data", keyStrokeHandlerForNavigation);
+        },
+
+        bindKeyStrokesToQuitCurrentCommand = function () {
+            listenToKeyStrokes();
+            stdin.on("data", keyStrokeHandlerForQuittingCurrentCommand);
+        },
+
+        unbindKeyStrokesToQuitCurrentCommand = function () {
+            stdin.removeListener("data", keyStrokeHandlerForQuittingCurrentCommand);
         },
 
         listenToKeyStrokes = function () {
@@ -118,8 +129,8 @@ var myterminalCliCompanion = (function () {
             stdin.setEncoding("utf8");
         },
 
-        keyStrokeHandler = function (key) {
-            unbindKeyStrokes();
+        keyStrokeHandlerForNavigation = function (key) {
+            unbindKeyStrokesToNavigate();
 
             if (key === "\u0003") {
                 exit();
@@ -143,6 +154,12 @@ var myterminalCliCompanion = (function () {
                 }
             } else {
                 showNextScreen();
+            }
+        },
+
+        keyStrokeHandlerForQuittingCurrentCommand = function (key) {
+            if (key === "\u0003") {
+                currentCommandInstance.kill();
             }
         },
 
@@ -185,16 +202,22 @@ var myterminalCliCompanion = (function () {
         },
 
         executeShellCommand = function (command) {
-            try {
-                execSync(command, {
-                    stdio: [0, 1, 2]
-                });
-            } catch (e) {
-                // Do not need to do anything particular
-            }
+            var commandWords = command.split(' '),
+                commandName = commandWords[0],
+                commandArguments = commandWords.slice(1);
 
+            currentCommandInstance = spawn(commandName, commandArguments, {
+                stdio: [0, 1, 2]
+            });
+
+            currentCommandInstance.on('close', finishUpWithCurrentCommand);
+            bindKeyStrokesToQuitCurrentCommand();
+        },
+
+        finishUpWithCurrentCommand = function () {
             console.log("\n" + chalk.green(getSeparator("-")));
-            bindKeyStrokes();
+            unbindKeyStrokesToQuitCurrentCommand();
+            bindKeyStrokesToNavigate();
         },
 
         gatherParamsAndExecuteCommand = function (command) {

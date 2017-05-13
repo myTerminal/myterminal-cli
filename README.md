@@ -48,6 +48,6 @@ You can also start *myterminal* without supplying the configuration file path, i
 
 ## To-do
 
-* A lot of things, ideas floating around all over my mind
+* Repeating tasks
+* Tasks with specific working directory
 
-This is just a start!
