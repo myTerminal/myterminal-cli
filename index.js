@@ -207,7 +207,8 @@ var myterminalCliCompanion = (function () {
                 commandArguments = commandWords.slice(1);
 
             currentCommandInstance = spawn(commandName, commandArguments, {
-                stdio: [0, 1, 2]
+                stdio: [0, 1, 2],
+                shell: true
             });
 
             currentCommandInstance.on('close', finishUpWithCurrentCommand);
