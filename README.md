@@ -50,7 +50,3 @@ You can also start *myterminal* without supplying the configuration file path, i
 
 * Repeating tasks
 * Tasks with specific working directory
-
-## Known issue on Windows
-
-On killing a long-running command with a '^-C', the cli exits too.

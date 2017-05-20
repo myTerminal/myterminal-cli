@@ -234,10 +234,23 @@ var myterminalCliCompanion = (function () {
             });
         },
 
+        bindEventForAbortingCurrentCommandOnWindows = function () {
+            process.on("SIGINT", function () {
+                if (currentCommandInstance) {
+                    currentCommandInstance.kill();
+                    currentCommandInstance = null;
+                } else {
+                    process.exit();
+                }
+            });
+        },
+
         exit = function () {
             clear();
             process.exit();
         };
+
+    bindEventForAbortingCurrentCommandOnWindows();
 
     return {
         copyConfigFileIfNotPresent: copyConfigFileIfNotPresent,
