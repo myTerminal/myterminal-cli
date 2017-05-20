@@ -175,7 +175,7 @@ var myterminalCliCompanion = (function () {
             console.log(chalk.inverse.green(getCenteredText("Command: " + command.title)) + "\n");
 
             if (!command.params) {
-                executeShellCommand(command.task);
+                executeShellCommand(command.task, command.directory);
             } else {
                 gatherParamsAndExecuteCommand(command);
             }
@@ -201,12 +201,13 @@ var myterminalCliCompanion = (function () {
                 .join("");
         },
 
-        executeShellCommand = function (command) {
+        executeShellCommand = function (command, directory) {
             var commandWords = command.split(' '),
                 commandName = commandWords[0],
                 commandArguments = commandWords.slice(1);
 
             currentCommandInstance = spawn(commandName, commandArguments, {
+                cwd: directory,
                 stdio: [0, 1, 2],
                 shell: true
             });
@@ -230,7 +231,7 @@ var myterminalCliCompanion = (function () {
                     return result[command.params[i]];
                 })).join(" ");
 
-                executeShellCommand(taskToBeExecuted);
+                executeShellCommand(taskToBeExecuted, command.directory);
             });
         },
 

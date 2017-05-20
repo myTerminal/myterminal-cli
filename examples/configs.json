@@ -20,9 +20,10 @@
                 }
             }
         },
-        "d": {
-            "title": "What's the date",
-            "task": "date"
+        "l": {
+            "title": "Count my GitHub repositories",
+            "task": "ls | wc -l",
+            "directory": "/users/ismail/_repositories"
         },
         "s": {
             "title": "System",

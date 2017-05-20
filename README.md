@@ -23,6 +23,13 @@ An all-day command-line companion
 
 *myterminal* is designed to be a command-line application that would help you perform repetitive tasks that you do all day long with the press of a single programmable key. It tends to be an interactive command-line interface that you would (hopefully) keep running in a terminal window on your workstation to perform a set of programmed tasks and present them to the user in a nested manner.
 
+## Features
+
+* Configure long commands to be invoked with a single key-stroke
+* Nest similar or related commands in a menu
+* Specify parameters for commands
+* Configure working directories for commands
+
 ## Installation
 
 *myterminal* is available on *Npm*. You can install it globally with a simple command.
@@ -49,4 +56,3 @@ You can also start *myterminal* without supplying the configuration file path, i
 ## To-do
 
 * Repeating tasks
-* Tasks with specific working directory
