@@ -159,7 +159,7 @@ var myterminalCliCompanion = (function () {
 
         keyStrokeHandlerForQuittingCurrentCommand = function (key) {
             if (key === "\u0003") {
-                currentCommandInstance.kill();
+                abortCurrentShellCommand();
             }
         },
 
@@ -216,6 +216,11 @@ var myterminalCliCompanion = (function () {
             bindKeyStrokesToQuitCurrentCommand();
         },
 
+        abortCurrentShellCommand = function () {
+            currentCommandInstance.kill();
+            currentCommandInstance = null;
+        },
+
         finishUpWithCurrentCommand = function () {
             console.log("\n" + chalk.green(getSeparator("-")));
             unbindKeyStrokesToQuitCurrentCommand();
@@ -238,8 +243,7 @@ var myterminalCliCompanion = (function () {
         bindEventForAbortingCurrentCommandOnWindows = function () {
             process.on("SIGINT", function () {
                 if (currentCommandInstance) {
-                    currentCommandInstance.kill();
-                    currentCommandInstance = null;
+                    abortCurrentShellCommand();
                 } else {
                     process.exit();
                 }
