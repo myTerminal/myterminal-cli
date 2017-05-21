@@ -147,7 +147,7 @@ var myterminalCliCompanion = (function () {
 
                 if (task) {
                     showOptions();
-                    executeCommand(selectedCommand);
+                    prepareToExecuteCommandObject(selectedCommand);
                 } else {
                     currentState.push(key);
                     showNextScreen();
@@ -171,7 +171,7 @@ var myterminalCliCompanion = (function () {
                 }, configs).commands[option];
         },
 
-        executeCommand = function (command) {
+        prepareToExecuteCommandObject = function (command) {
             console.log(chalk.inverse.green(getCenteredText("Command: " + command.title)) + "\n");
 
             if (!command.params) {
