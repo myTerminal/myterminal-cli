@@ -30,6 +30,7 @@ An all-day command-line companion
 * Specify parameters for commands
 * Configure working directories for commands
 * Re-run command with a *[space]*
+* Run a custom command, which can later become the 'last' command
 
 ## Installation
 

@@ -88,8 +88,10 @@ var myterminalCliCompanion = (function () {
                 }
             });
 
+            console.log(chalk.yellow("\nPress '/' to run a custom command"));
+
             if (mostRecentlyRunCommand) {
-                console.log(chalk.yellow("\nPress [space] to re-run the last command"));
+                console.log(chalk.yellow("Press [space] to re-run the last command"));
             }
 
             if (currentCommandBranch !== configs) {
@@ -140,6 +142,9 @@ var myterminalCliCompanion = (function () {
 
             if (key === "\u0003") {
                 exit();
+            } else if (key === "/") {
+                showOptions();
+                promptForCustomCommandAndExecute();
             } else if (key === " ") {
                 if (mostRecentlyRunCommand) {
                     showOptions();
@@ -182,6 +187,20 @@ var myterminalCliCompanion = (function () {
                 : currentState.reduce(function (a, c) {
                     return a["commands"][c];
                 }, configs).commands[option];
+        },
+
+        promptForCustomCommandAndExecute = function () {
+            prompt.start();
+            prompt.get([
+                "custom-command",
+                "directory"
+            ], function(err, result) {
+                prepareToExecuteCommandObject({
+                    title: result["custom-command"] + " in " + result["directory"],
+                    task: result["custom-command"],
+                    directory: result["directory"]
+                });
+            });
         },
 
         prepareToExecuteCommandObject = function (command) {
