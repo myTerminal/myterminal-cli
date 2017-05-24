@@ -29,6 +29,7 @@ An all-day command-line companion
 * Nest similar or related commands in a menu
 * Specify parameters for commands
 * Configure working directories for commands
+* Re-run command with a *[space]*
 
 ## Installation
 

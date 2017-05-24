@@ -20,6 +20,8 @@ var myterminalCliCompanion = (function () {
 
         currentState = [],
 
+        mostRecentlyRunCommand,
+
         currentCommandInstance,
 
         copyConfigFileIfNotPresent = function () {
@@ -86,6 +88,10 @@ var myterminalCliCompanion = (function () {
                 }
             });
 
+            if (mostRecentlyRunCommand) {
+                console.log(chalk.yellow("\nPress [space] to re-run the last command"));
+            }
+
             if (currentCommandBranch !== configs) {
                 console.log(chalk.red("\nq" + ": " + "Go back...") + "\n");
             } else {
@@ -134,6 +140,13 @@ var myterminalCliCompanion = (function () {
 
             if (key === "\u0003") {
                 exit();
+            } else if (key === " ") {
+                if (mostRecentlyRunCommand) {
+                    showOptions();
+                    prepareToExecuteCommandObject(mostRecentlyRunCommand);
+                } else {
+                    showNextScreen();
+                }
             } else if (key === "q") {
                 if (!currentState.length) {
                     exit();
@@ -172,6 +185,8 @@ var myterminalCliCompanion = (function () {
         },
 
         prepareToExecuteCommandObject = function (command) {
+            mostRecentlyRunCommand = command;
+
             console.log(chalk.inverse.green(getCenteredText("Command: " + command.title)) + "\n");
 
             if (!command.params) {
@@ -223,6 +238,9 @@ var myterminalCliCompanion = (function () {
 
         finishUpWithCurrentCommand = function () {
             console.log("\n" + chalk.green(getSeparator("-")));
+
+            currentCommandInstance = null;
+
             unbindKeyStrokesToQuitCurrentCommand();
             bindKeyStrokesToNavigate();
         },
