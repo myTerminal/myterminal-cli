@@ -43,6 +43,7 @@ var myterminalCliCompanion = (function () {
         showOptions = function () {
             printHeader();
             printBreadCrumbs();
+            printInstructions();
             printCurrentOptions();
         },
 
@@ -77,27 +78,31 @@ var myterminalCliCompanion = (function () {
             console.log(chalk.cyan([configs.title].concat(breadCrumbs).join(" -> ") + "\n"));
         },
 
+        printInstructions = function () {
+            console.log("Press a marked key to perform the respective operation\n");
+        },
+
         printCurrentOptions = function () {
             var currentCommandBranch = getCurrentCommandBranch();
 
             getCurrentCommandOptions().forEach(function (k) {
-                if (currentCommandBranch.commands[k].command) {
-                    console.log(chalk.yellow(k + ": " + "[" + currentCommandBranch.commands[k]["title"] + "]"));
-                } else {
-                    console.log(chalk.yellow(k + ": " + currentCommandBranch.commands[k]["title"]));
-                }
+                console.log(chalk.green("(" + k + ") ")
+                            + currentCommandBranch.commands[k]["title"] +
+                            (currentCommandBranch.commands[k].commands
+                             ? "..."
+                             : ""));
             });
 
-            console.log(chalk.yellow("\nPress '/' to run a custom command"));
+            console.log("\nPress " + chalk.green("'/'") + " to run a custom command");
 
             if (mostRecentlyRunCommand) {
-                console.log(chalk.yellow("Press [space] to re-run the last command"));
+                console.log("Press " + chalk.green("[space]") + " to re-run the last command");
             }
 
             if (currentCommandBranch !== configs) {
-                console.log(chalk.red("\nq" + ": " + "Go back...") + "\n");
+                console.log(chalk.red("\n(q) ") + "Go back..." + "\n");
             } else {
-                console.log(chalk.red("\nq" + ": " + "Quit") + "\n");
+                console.log(chalk.red("\n(q) ") + "Quit" + "\n");
             }
         },
 
