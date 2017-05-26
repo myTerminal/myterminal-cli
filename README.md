@@ -29,7 +29,8 @@ An all-day command-line companion
 * Nest similar or related commands in a menu
 * Specify parameters for commands
 * Configure working directories for commands
-* Re-run command with a *[space]*
+* Re-perform the last action with a *[space]*
+* Re-run the last command with a *.*
 * Run a custom command, which can later become the 'last' command
 
 ## Installation

@@ -22,6 +22,8 @@ var myterminalCliCompanion = (function () {
 
         mostRecentlyRunCommand,
 
+        lastRunShellCommand,
+
         currentCommandInstance,
 
         copyConfigFileIfNotPresent = function () {
@@ -93,10 +95,16 @@ var myterminalCliCompanion = (function () {
                              : ""));
             });
 
-            console.log("\nPress " + chalk.green("'/'") + " to run a custom command");
+            console.log("");
+
+            console.log(chalk.green("(/) ") + "Run a custom command");
+
+            if (lastRunShellCommand) {
+                console.log(chalk.green("(.) ") + "Re-run the last command");
+            }
 
             if (mostRecentlyRunCommand) {
-                console.log("Press " + chalk.green("[space]") + " to re-run the last command");
+                console.log(chalk.green("[space] ") + "Select the last action");
             }
 
             if (currentCommandBranch !== configs) {
@@ -154,6 +162,14 @@ var myterminalCliCompanion = (function () {
                 if (mostRecentlyRunCommand) {
                     showOptions();
                     prepareToExecuteCommandObject(mostRecentlyRunCommand);
+                } else {
+                    showNextScreen();
+                }
+            } else if (key === ".") {
+                if (lastRunShellCommand) {
+                    showOptions();
+                    console.log(chalk.inverse.green(getCenteredText("Command: " + "(previously run command)")) + "\n");
+                    executeShellCommand(lastRunShellCommand.command, lastRunShellCommand.directory);
                 } else {
                     showNextScreen();
                 }
@@ -244,6 +260,11 @@ var myterminalCliCompanion = (function () {
             var commandWords = command.split(' '),
                 commandName = commandWords[0],
                 commandArguments = commandWords.slice(1);
+
+            lastRunShellCommand = {
+                command: command,
+                directory: directory
+            };
 
             currentCommandInstance = spawn(commandName, commandArguments, {
                 cwd: directory,
