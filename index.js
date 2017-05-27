@@ -216,11 +216,15 @@ var myterminalCliCompanion = (function () {
                 "custom-command",
                 "directory"
             ], function(err, result) {
-                prepareToExecuteCommandObject({
-                    title: result["custom-command"] + " in " + result["directory"],
-                    task: result["custom-command"],
-                    directory: result["directory"]
-                });
+                try {
+                    prepareToExecuteCommandObject({
+                        title: result["custom-command"] + " in " + result["directory"],
+                        task: result["custom-command"],
+                        directory: result["directory"]
+                    });
+                } catch (e) {
+                    showNextScreen();
+                }
             });
         },
 
@@ -293,13 +297,17 @@ var myterminalCliCompanion = (function () {
         gatherParamsAndExecuteCommand = function (command) {
             prompt.start();
             prompt.get(command.params, function(err, result) {
-                var taskToBeExecuted = [
-                    command.task
-                ].concat(command.params.map(function (p, i) {
-                    return result[command.params[i]];
-                })).join(" ");
+                try {
+                    var taskToBeExecuted = [
+                        command.task
+                    ].concat(command.params.map(function (p, i) {
+                        return result[command.params[i]];
+                    })).join(" ");
 
-                executeShellCommand(taskToBeExecuted, command.directory);
+                    executeShellCommand(taskToBeExecuted, command.directory);
+                } catch (e) {
+                    showNextScreen();
+                }
             });
         },
 
