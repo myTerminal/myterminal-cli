@@ -18,6 +18,8 @@ var path = require("path"),
 var myterminalCliCompanion = (function () {
     var configs,
 
+        // State storage
+
         currentState = [],
 
         mostRecentlyRunCommand,
@@ -25,6 +27,8 @@ var myterminalCliCompanion = (function () {
         lastRunShellCommand,
 
         currentCommandInstance,
+
+        // User facing functions
 
         copyConfigFileIfNotPresent = function () {
             fse.copySync(path.resolve(__dirname, "../examples/configs.json"),
@@ -37,36 +41,30 @@ var myterminalCliCompanion = (function () {
             configs = data;
         },
 
-        showNextScreen = function () {
-            showOptions();
+        promptForAction = function () {
+            rePrintMenu();
             bindKeyStrokesToNavigate();
         },
 
-        showOptions = function () {
-            printHeader();
-            printBreadCrumbs();
-            printInstructions();
-            printCurrentOptions();
+        // Display related functions
+
+        rePrintMenu = function () {
+            clear();
+            printMenuHeader();
+            printMenuBreadCrumbs();
+            printMenuInstructions();
+            printMenuOptions();
         },
 
-        printHeader = function () {
+        printMenuHeader = function () {
             var centeredTitle = getCenteredText("myterminal-cli v" + version);
 
-            clear();
             console.log(chalk.inverse.cyan(getSeparator(" ")));
             console.log(chalk.inverse.cyan(centeredTitle));
             console.log(chalk.inverse.cyan(getSeparator(" ")) + "\n");
         },
 
-        getCenteredText = function (text) {
-            var fillerSize = getSeparator(" ").length - text.length;
-
-            return getString(" ", Math.floor(fillerSize / 2))
-                + text
-                + getString(" ", Math.ceil(fillerSize / 2));
-        },
-
-        printBreadCrumbs = function () {
+        printMenuBreadCrumbs = function () {
             var breadCrumbs = currentState.map(function (s, i) {
                 return currentState.slice(0, i + 1);
             }).map(function (s, i) {
@@ -80,11 +78,11 @@ var myterminalCliCompanion = (function () {
             console.log(chalk.cyan([configs.title].concat(breadCrumbs).join(" -> ") + "\n"));
         },
 
-        printInstructions = function () {
+        printMenuInstructions = function () {
             console.log("Press a marked key to perform the respective operation\n");
         },
 
-        printCurrentOptions = function () {
+        printMenuOptions = function () {
             var currentCommandBranch = getCurrentCommandBranch();
 
             getCurrentCommandOptions().forEach(function (k) {
@@ -95,7 +93,7 @@ var myterminalCliCompanion = (function () {
                              : ""));
             });
 
-            console.log("");
+            printEmptyLine();
 
             console.log(chalk.green("(/) ") + "Run a custom command");
 
@@ -114,6 +112,50 @@ var myterminalCliCompanion = (function () {
             }
         },
 
+        printCommandLogHeader = function (commandTitle) {
+            console.log(chalk.inverse.green(getCenteredText("Command: " + commandTitle)) + "\n");
+        },
+
+        printCommandAbortInstructions = function () {
+            console.log("You can press ^-C to abort current task\n");
+        },
+
+        printEmptyLine = function () {
+            console.log("");
+        },
+
+        // Display related helpers
+
+        getCenteredText = function (text) {
+            var fillerSize = getSeparator(" ").length - text.length;
+
+            return getString(" ", Math.floor(fillerSize / 2))
+                + text
+                + getString(" ", Math.ceil(fillerSize / 2));
+        },
+
+        getSeparator = function (char) {
+            return new Array(process.stdout.columns - 1)
+                .join(",")
+                .split(",")
+                .map(function () {
+                    return char;
+                })
+                .join("");
+        },
+
+        getString = function (char, size) {
+            return new Array(size)
+                .join(",")
+                .split(",")
+                .map(function () {
+                    return char;
+                })
+                .join("");
+        },
+
+        // Command parsing functions
+
         getCurrentCommandBranch = function () {
             return !currentState.length
                 ? configs
@@ -125,6 +167,16 @@ var myterminalCliCompanion = (function () {
         getCurrentCommandOptions = function () {
             return Object.keys(getCurrentCommandBranch().commands);
         },
+
+        getCommandForOption = function (option) {
+            return !currentState.length
+                ? configs.commands[option]
+                : currentState.reduce(function (a, c) {
+                    return a["commands"][c];
+                }, configs).commands[option];
+        },
+
+        // Keystrokes binding functions
 
         bindKeyStrokesToNavigate = function () {
             listenToKeyStrokes();
@@ -150,49 +202,79 @@ var myterminalCliCompanion = (function () {
             stdin.setEncoding("utf8");
         },
 
+        bindEventForAbortingCurrentCommandOnWindows = function () {
+            process.on("SIGINT", function () {
+                if (currentCommandInstance) {
+                    abortCurrentShellCommand();
+                } else {
+                    process.exit();
+                }
+            });
+        },
+
+        // Keystrokes handlers
+
         keyStrokeHandlerForNavigation = function (key) {
             unbindKeyStrokesToNavigate();
 
             if (key === "\u0003") {
+
                 exit();
+
             } else if (key === "/") {
-                showOptions();
+
+                rePrintMenu();
+                printCommandAbortInstructions();
                 promptForCustomCommandAndExecute();
+
             } else if (key === " ") {
+
                 if (mostRecentlyRunCommand) {
-                    showOptions();
+                    rePrintMenu();
+                    printCommandAbortInstructions();
                     prepareToExecuteCommandObject(mostRecentlyRunCommand);
                 } else {
-                    showNextScreen();
+                    promptForAction();
                 }
+
             } else if (key === ".") {
+x
                 if (lastRunShellCommand) {
-                    showOptions();
-                    console.log(chalk.inverse.green(getCenteredText("Command: " + "(previously run command)")) + "\n");
+                    rePrintMenu();
+                    printCommandAbortInstructions();
+                    printCommandLogHeader("(previously run command)");
                     executeShellCommand(lastRunShellCommand.command, lastRunShellCommand.directory);
                 } else {
-                    showNextScreen();
+                    promptForAction();
                 }
+
             } else if (key === "q") {
+
                 if (!currentState.length) {
                     exit();
                 }
 
                 currentState.pop();
-                showNextScreen();
+                promptForAction();
+
             } else if (getCurrentCommandOptions().indexOf(key) > -1) {
+
                 var selectedCommand = getCommandForOption(key),
                     task = selectedCommand.task;
 
                 if (task) {
-                    showOptions();
+                    rePrintMenu();
+                    printCommandAbortInstructions();
                     prepareToExecuteCommandObject(selectedCommand);
                 } else {
                     currentState.push(key);
-                    showNextScreen();
+                    promptForAction();
                 }
+
             } else {
-                showNextScreen();
+
+                promptForAction();
+
             }
         },
 
@@ -202,12 +284,35 @@ var myterminalCliCompanion = (function () {
             }
         },
 
-        getCommandForOption = function (option) {
-            return !currentState.length
-                ? configs.commands[option]
-                : currentState.reduce(function (a, c) {
-                    return a["commands"][c];
-                }, configs).commands[option];
+        // Command execution
+
+        gatherParamsAndExecuteCommand = function (command) {
+            prompt.start();
+            prompt.get(command.params, function(err, result) {
+                try {
+                    var taskToBeExecuted = [
+                        command.task
+                    ].concat(command.params.map(function (p, i) {
+                        return result[command.params[i]];
+                    })).join(" ");
+
+                    executeShellCommand(taskToBeExecuted, command.directory);
+                } catch (e) {
+                    promptForAction();
+                }
+            });
+        },
+
+        prepareToExecuteCommandObject = function (command) {
+            mostRecentlyRunCommand = command;
+
+            printCommandLogHeader(command.title);
+
+            if (!command.params) {
+                executeShellCommand(command.task, command.directory);
+            } else {
+                gatherParamsAndExecuteCommand(command);
+            }
         },
 
         promptForCustomCommandAndExecute = function () {
@@ -217,47 +322,19 @@ var myterminalCliCompanion = (function () {
                 "directory"
             ], function(err, result) {
                 try {
+                    var directory = result["directory"] || ".";
+
+                    printEmptyLine();
+
                     prepareToExecuteCommandObject({
-                        title: result["custom-command"] + " in " + result["directory"],
+                        title: result["custom-command"] + " in " + directory,
                         task: result["custom-command"],
-                        directory: result["directory"]
+                        directory: directory
                     });
                 } catch (e) {
-                    showNextScreen();
+                    promptForAction();
                 }
             });
-        },
-
-        prepareToExecuteCommandObject = function (command) {
-            mostRecentlyRunCommand = command;
-
-            console.log(chalk.inverse.green(getCenteredText("Command: " + command.title)) + "\n");
-
-            if (!command.params) {
-                executeShellCommand(command.task, command.directory);
-            } else {
-                gatherParamsAndExecuteCommand(command);
-            }
-        },
-
-        getSeparator = function (char) {
-            return new Array(process.stdout.columns - 1)
-                .join(",")
-                .split(",")
-                .map(function () {
-                    return char;
-                })
-                .join("");
-        },
-
-        getString = function (char, size) {
-            return new Array(size)
-                .join(",")
-                .split(",")
-                .map(function () {
-                    return char;
-                })
-                .join("");
         },
 
         executeShellCommand = function (command, directory) {
@@ -280,6 +357,8 @@ var myterminalCliCompanion = (function () {
             bindKeyStrokesToQuitCurrentCommand();
         },
 
+        // Command abortion and clean-up
+
         abortCurrentShellCommand = function () {
             currentCommandInstance.kill();
             currentCommandInstance = null;
@@ -294,32 +373,7 @@ var myterminalCliCompanion = (function () {
             bindKeyStrokesToNavigate();
         },
 
-        gatherParamsAndExecuteCommand = function (command) {
-            prompt.start();
-            prompt.get(command.params, function(err, result) {
-                try {
-                    var taskToBeExecuted = [
-                        command.task
-                    ].concat(command.params.map(function (p, i) {
-                        return result[command.params[i]];
-                    })).join(" ");
-
-                    executeShellCommand(taskToBeExecuted, command.directory);
-                } catch (e) {
-                    showNextScreen();
-                }
-            });
-        },
-
-        bindEventForAbortingCurrentCommandOnWindows = function () {
-            process.on("SIGINT", function () {
-                if (currentCommandInstance) {
-                    abortCurrentShellCommand();
-                } else {
-                    process.exit();
-                }
-            });
-        },
+        // Exit
 
         exit = function () {
             clear();
@@ -331,7 +385,7 @@ var myterminalCliCompanion = (function () {
     return {
         copyConfigFileIfNotPresent: copyConfigFileIfNotPresent,
         setConfigs: setConfigs,
-        showNextScreen: showNextScreen
+        promptForAction: promptForAction
     };
 })();
 
@@ -344,4 +398,4 @@ var absoluteConfigPath = suppliedRelativeConfigPath
 
 myterminalCliCompanion.copyConfigFileIfNotPresent();
 myterminalCliCompanion.setConfigs(require(absoluteConfigPath));
-myterminalCliCompanion.showNextScreen();
+myterminalCliCompanion.promptForAction();
