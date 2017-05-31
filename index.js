@@ -238,7 +238,7 @@ var myterminalCliCompanion = (function () {
                 }
 
             } else if (key === ".") {
-x
+
                 if (lastRunShellCommand) {
                     rePrintMenu();
                     printCommandAbortInstructions();
