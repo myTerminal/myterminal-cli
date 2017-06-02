@@ -112,8 +112,10 @@ var myterminalCliCompanion = (function () {
             }
         },
 
-        printCommandLogHeader = function (commandTitle) {
-            console.log(chalk.inverse.green(getCenteredText("Command: " + commandTitle)) + "\n");
+        printCommandLogHeader = function (commandObject) {
+            console.log(chalk.inverse.green(getCenteredText("Command: " + (commandObject.title || commandObject.task))));
+            console.log(chalk.inverse.white(getCenteredText("Directory: " + getSpecificCommandDirectory(commandObject.directory))));
+            printEmptyLine();
         },
 
         printCommandAbortInstructions = function () {
@@ -242,8 +244,8 @@ var myterminalCliCompanion = (function () {
                 if (lastRunShellCommand) {
                     rePrintMenu();
                     printCommandAbortInstructions();
-                    printCommandLogHeader("(previously run command)");
-                    executeShellCommand(lastRunShellCommand.command, lastRunShellCommand.directory);
+                    printCommandLogHeader(lastRunShellCommand);
+                    executeShellCommand(lastRunShellCommand.task, lastRunShellCommand.directory);
                 } else {
                     promptForAction();
                 }
@@ -303,10 +305,14 @@ var myterminalCliCompanion = (function () {
             });
         },
 
+        getSpecificCommandDirectory = function (directory) {
+            return directory || getCurrentCommandBranch().directory || ".";
+        },
+
         prepareToExecuteCommandObject = function (command) {
             mostRecentlyRunCommand = command;
 
-            printCommandLogHeader(command.title);
+            printCommandLogHeader(command);
 
             if (!command.params) {
                 executeShellCommand(command.task, command.directory);
@@ -322,12 +328,12 @@ var myterminalCliCompanion = (function () {
                 "directory"
             ], function(err, result) {
                 try {
-                    var directory = result["directory"] || ".";
+                    var directory = getSpecificCommandDirectory(result["directory"]);
 
                     printEmptyLine();
 
                     prepareToExecuteCommandObject({
-                        title: result["custom-command"] + " in " + directory,
+                        title: result["custom-command"],
                         task: result["custom-command"],
                         directory: directory
                     });
@@ -340,15 +346,16 @@ var myterminalCliCompanion = (function () {
         executeShellCommand = function (command, directory) {
             var commandWords = command.split(' '),
                 commandName = commandWords[0],
-                commandArguments = commandWords.slice(1);
+                commandArguments = commandWords.slice(1),
+                commandDirectory = getSpecificCommandDirectory(directory);
 
             lastRunShellCommand = {
-                command: command,
-                directory: directory
+                task: command,
+                directory: commandDirectory
             };
 
             currentCommandInstance = spawn(commandName, commandArguments, {
-                cwd: directory,
+                cwd: commandDirectory,
                 stdio: [0, 1, 2],
                 shell: true
             });
