@@ -29,8 +29,8 @@ An all-day command-line companion
 * Nest similar or related commands in a menu
 * Specify parameters for commands
 * Configure working directories for commands or a group of commands
-* Re-perform the last action with a *[space]*
-* Re-run the last command with a *.*
+* Re-perform the last action with a *(\\)*
+* Re-run the last command with a *(.)*
 * Run a custom command, which can later become the 'last' command
 
 ## Installation
@@ -49,6 +49,8 @@ Run `myterminal-cli` or simply `myterminal` from the command line passing it a p
 
 You can also start *myterminal* without supplying the configuration file path, in which case it will start with a configuration file named *myterminal-configs.json* placed at your home (~/) directory. If the file does not exist, it will be created when the application is started for the first time.
 
+**Note:** Since the upgrade to version 2, *myterminal* uses an entirely new interface. In order to use the old one, type `myterminal-cli-legacy` instead.
+
 ## Configuration
 
 The configuration file should contain a valid JSON. It consists of nodes having a *title* and a subtree called *commands*. Each of these nodes hold a group of commands. The tree within contains a single character with which the group can be selected while the application is running. When a node has a property *task* instead of *commands*, it is treated as a command to be executed, rather than a group of commands.
@@ -59,6 +61,7 @@ Each of the items, be it a command or a group of commands, can have a defined *d
 
 ## Dependencies
 
+* blessed
 * prompt
 * clear
 * chalk
