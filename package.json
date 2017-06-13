@@ -1,11 +1,10 @@
 {
   "name": "myterminal",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "An all-day command-line companion",
   "bin": {
     "myterminal": "bin/index.js",
-    "myterminal-cli": "bin/index.js",
-    "myterminal-cli-legacy": "bin/index-legacy.js"
+    "myterminal-cli": "bin/index.js"
   },
   "scripts": {
     "install-globals": "npm install -g gulp-cli",

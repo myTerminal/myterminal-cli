@@ -4,41 +4,20 @@ var gulp = require('gulp'),
     watch = require('gulp-watch'),
     uglify = require('gulp-uglify');
 
-gulp.task('scripts-main', function () {
+gulp.task('scripts', function () {
     return gulp.src([
-        'src/index.js'
-    ]).pipe(uglify())
+        'src/**/*.js'
+    ])
+        .pipe(uglify())
         .pipe(gulp.dest('bin'));
 });
 
-gulp.task('scripts-main-debug', function () {
+gulp.task('scripts-debug', function () {
     return gulp.src([
-        'src/index.js'
-    ]).pipe(gulp.dest('bin'));
-});
-
-gulp.task('scripts-legacy', function () {
-    return gulp.src([
-        'src/index-legacy.js'
-    ]).pipe(uglify())
+        'src/**/*.js'
+    ])
         .pipe(gulp.dest('bin'));
 });
-
-gulp.task('scripts-legacy-debug', function () {
-    return gulp.src([
-        'src/index-legacy.js'
-    ]).pipe(gulp.dest('bin'));
-});
-
-gulp.task('scripts', [
-    'scripts-main',
-    'scripts-legacy'
-]);
-
-gulp.task('scripts-debug', [
-    'scripts-main-debug',
-    'scripts-legacy-debug'
-]);
 
 gulp.task('default', ['scripts']);
 
@@ -46,14 +25,14 @@ gulp.task('debug', ['scripts-debug']);
 
 gulp.task('develop', function() {
     gulp.watch([
-        'src/index.js'
+        'src/**/*.js'
     ], [
-        'scripts-main-debug'
+        'scripts-debug'
     ]);
 
     gulp.watch([
-        'src/index-legacy.js'
+        'src/**/*.js'
     ], [
-        'scripts-legacy-debug'
+        'scripts-debug'
     ]);
 });

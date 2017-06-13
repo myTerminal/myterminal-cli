@@ -1,21 +1,18 @@
-#!/usr/bin/env node
-
-/* global require module process */
+/* global require module __dirname process */
 
 var path = require("path"),
     os = require("os"),
-    stdin = process.stdin,
     spawn = require('child_process').spawn,
+    stdin = process.stdin,
     prompt = require("prompt"),
-    clear = require("clear"),
     chalk = require("chalk"),
+    clear = require("clear"),
     fse = require("fs-extra"),
     version = require("../package.json").version,
-    args = process.argv,
-    suppliedRelativeConfigPath = args[2],
     defaultConfigFilePath = path.resolve(os.homedir(), "myterminal-configs.json");
 
-var myterminalCliCompanion = (function () {
+module.exports = (function () {
+    
     var configs,
 
         // State storage
@@ -395,14 +392,3 @@ var myterminalCliCompanion = (function () {
         promptForAction: promptForAction
     };
 })();
-
-prompt.message = "Enter the value for ";
-prompt.delimiter = "";
-
-var absoluteConfigPath = suppliedRelativeConfigPath
-    ? path.resolve(process.cwd(), suppliedRelativeConfigPath)
-    : defaultConfigFilePath;
-
-myterminalCliCompanion.copyConfigFileIfNotPresent();
-myterminalCliCompanion.setConfigs(require(absoluteConfigPath));
-myterminalCliCompanion.promptForAction();

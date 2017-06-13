@@ -49,7 +49,7 @@ Run `myterminal-cli` or simply `myterminal` from the command line passing it a p
 
 You can also start *myterminal* without supplying the configuration file path, in which case it will start with a configuration file named *myterminal-configs.json* placed at your home (~/) directory. If the file does not exist, it will be created when the application is started for the first time.
 
-**Note:** Since the upgrade to version 2, *myterminal* uses an entirely new interface. In order to use the old one, type `myterminal-cli-legacy` instead.
+**Note:** Since the upgrade to version 2, *myterminal* uses an entirely new interface which does not work well on Windows. Hence *myterminal* starts in legacy mode in Windows, which means almost the same functionality, with the old interface.
 
 ## Configuration
 
