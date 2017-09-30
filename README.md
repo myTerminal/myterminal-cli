@@ -61,11 +61,11 @@ Each of the items, be it a command or a group of commands, can have a defined *d
 
 ## Dependencies
 
-* blessed
-* prompt
-* clear
-* chalk
-* fs-extra
+* [blessed](https://www.npmjs.com/package/blessed)
+* [prompt](https://www.npmjs.com/package/prompt)
+* [clear](https://www.npmjs.com/package/clear)
+* [chalk](https://www.npmjs.com/package/chalk)
+* [fs-extra](https://www.npmjs.com/package/fs-extra)
 
 ## To-do
 
