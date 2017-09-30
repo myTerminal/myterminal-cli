@@ -1,7 +1,7 @@
 /* global require */
 
 var gulp = require('gulp'),
-    watch = require('gulp-watch'),
+    watchNow = require('gulp-watch-now'),
     uglify = require('gulp-uglify');
 
 gulp.task('scripts', function () {
@@ -24,9 +24,11 @@ gulp.task('default', ['scripts']);
 gulp.task('debug', ['scripts-debug']);
 
 gulp.task('develop', function() {
-    gulp.watch([
-        'src/**/*.js'
-    ], [
-        'scripts-debug'
-    ]);
+    watchNow.watch(gulp,
+                   [
+                       'src/**/*.js'
+                   ],
+                   [
+                       'scripts-debug'
+                   ]);
 });

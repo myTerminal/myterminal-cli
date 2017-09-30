@@ -34,6 +34,6 @@
   "devDependencies": {
     "gulp": "3.9.1",
     "gulp-uglify": "3.0.0",
-    "gulp-watch": "4.3.11"
+    "gulp-watch-now": "0.9.1"
   }
 }
