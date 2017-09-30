@@ -29,10 +29,4 @@ gulp.task('develop', function() {
     ], [
         'scripts-debug'
     ]);
-
-    gulp.watch([
-        'src/**/*.js'
-    ], [
-        'scripts-debug'
-    ]);
 });
