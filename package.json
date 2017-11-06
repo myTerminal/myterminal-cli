@@ -32,7 +32,10 @@
     "prompt": "1.0.0"
   },
   "devDependencies": {
+    "babel-core": "6.26.0",
+    "babel-preset-env": "1.6.1",
     "gulp": "3.9.1",
+    "gulp-babel": "7.0.0",
     "gulp-uglify": "3.0.0",
     "gulp-watch-now": "0.9.1"
   }
