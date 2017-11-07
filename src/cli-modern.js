@@ -7,7 +7,7 @@ var path = require('path'),
     clear = require('clear'),
     fse = require('fs-extra'),
     version = require('../package.json').version,
-    defaultConfigFilePath = path.resolve(os.homedir(), "myterminal-configs.json");
+    defaultConfigFilePath = path.resolve(os.homedir(), 'myterminal-configs.json');
 
 module.exports = (function () {
 
@@ -210,21 +210,13 @@ module.exports = (function () {
         },
 
         updateThreaderText = function () {
-            var threads = currentState.map(function (s, i) {
-                return currentState.slice(0, i + 1);
-            }).map(function (s, i) {
-                return s.reduce(function (a, c) {
-                    return a.commands[c];
-                }, configs);
-            }).map(function (s) {
-                return s.title;
-            });
+            var threads = currentState.map((s, i) => currentState.slice(0, i + 1))
+                .map((s, i) => s.reduce((a, c) => a.commands[c], configs))
+                .map(s => s.title);
 
             var threaderText = [configs.title]
                 .concat(threads)
-                .map(function (t) {
-                    return '{#00FFFF-fg}' + t + '{/}';
-                })
+                .map(t => '{#00FFFF-fg}' + t + '{/}')
                 .join(' -> ');
 
             uiControls.menuBoxThreader.setContent(threaderText);
@@ -234,13 +226,12 @@ module.exports = (function () {
             var currentCommandBranch = getCurrentCommandBranch(),
                 menuItems = [];
 
-            getCurrentCommandOptions().forEach(function (k) {
-                menuItems.push(('{green-fg}(' + k + '){/} ')
-                            + currentCommandBranch.commands[k]['title'] +
-                            (currentCommandBranch.commands[k].commands
-                             ? '...'
-                             : ''));
-            });
+            getCurrentCommandOptions().forEach(k =>
+                                               menuItems.push(('{green-fg}(' + k + '){/} ')
+                                                              + currentCommandBranch.commands[k]['title'] +
+                                                              (currentCommandBranch.commands[k].commands
+                                                               ? '...'
+                                                               : '')));
 
             menuItems.push('');
 
@@ -291,9 +282,7 @@ module.exports = (function () {
         getCurrentCommandBranch = function () {
             return !currentState.length
                 ? configs
-                : currentState.reduce(function (a, c) {
-                    return a['commands'][c];
-                }, configs);
+                : currentState.reduce((a, c) => a['commands'][c], configs);
         },
 
         getCurrentCommandOptions = function () {
@@ -303,9 +292,7 @@ module.exports = (function () {
         getCommandForOption = function (option) {
             return !currentState.length
                 ? configs.commands[option]
-                : currentState.reduce(function (a, c) {
-                    return a['commands'][c];
-                }, configs).commands[option];
+                : currentState.reduce((a, c) => a['commands'][c], configs).commands[option];
         },
 
         // Keystrokes binding functions
@@ -313,17 +300,13 @@ module.exports = (function () {
         bindKeyStrokesToNavigate = function () {
             getCurrentCommandOptions()
                 .concat(specialKeys)
-                .forEach(function (key) {
-                    uiControls.screen.key(key, keyStrokeHandlerForNavigation);
-                });
+                .forEach(key => uiControls.screen.key(key, keyStrokeHandlerForNavigation));
         },
 
         unbindKeyStrokesToNavigate = function () {
             getCurrentCommandOptions()
                 .concat(specialKeys)
-                .forEach(function (key) {
-                    uiControls.screen.unkey(key);
-                })
+                .forEach(key => uiControls.screen.unkey(key));
         },
 
         bindKeyStrokesToQuitCurrentCommand = function () {

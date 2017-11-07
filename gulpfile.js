@@ -8,10 +8,9 @@ var gulp = require('gulp'),
 gulp.task('scripts', function () {
     return gulp.src([
         'src/**/*.js'
-    ])
-        .pipe(babel({
-            presets: ['env']
-        }))
+    ]).pipe(babel({
+        presets: ['env']
+    }))
         .pipe(uglify())
         .pipe(gulp.dest('bin'));
 });
@@ -19,8 +18,7 @@ gulp.task('scripts', function () {
 gulp.task('scripts-debug', function () {
     return gulp.src([
         'src/**/*.js'
-    ])
-        .pipe(gulp.dest('bin'));
+    ]).pipe(gulp.dest('bin'));
 });
 
 gulp.task('default', ['scripts']);

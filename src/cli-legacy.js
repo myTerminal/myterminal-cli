@@ -12,7 +12,7 @@ var path = require('path'),
     defaultConfigFilePath = path.resolve(os.homedir(), 'myterminal-configs.json');
 
 module.exports = (function () {
-    
+
     var configs,
 
         // State storage
@@ -62,15 +62,10 @@ module.exports = (function () {
         },
 
         printMenuBreadCrumbs = function () {
-            var breadCrumbs = currentState.map(function (s, i) {
-                return currentState.slice(0, i + 1);
-            }).map(function (s, i) {
-                return s.reduce(function (a, c) {
-                    return a.commands[c];
-                }, configs);
-            }).map(function (s) {
-                return s.title;
-            });
+            var breadCrumbs = currentState
+                .map((s, i) => currentState.slice(0, i + 1))
+                .map((s, i) => s.reduce((a, c) => a.commands[c], configs))
+                .map(s => s.title);
 
             console.log(chalk.cyan([configs.title].concat(breadCrumbs).join(' -> ') + '\n'));
         },
@@ -82,13 +77,12 @@ module.exports = (function () {
         printMenuOptions = function () {
             var currentCommandBranch = getCurrentCommandBranch();
 
-            getCurrentCommandOptions().forEach(function (k) {
-                console.log(chalk.green('(' + k + ') ')
-                            + currentCommandBranch.commands[k]['title'] +
-                            (currentCommandBranch.commands[k].commands
-                             ? '...'
-                             : ''));
-            });
+            getCurrentCommandOptions().forEach(k =>
+                                               console.log(chalk.green('(' + k + ') ')
+                                                           + currentCommandBranch.commands[k]['title'] +
+                                                           (currentCommandBranch.commands[k].commands
+                                                            ? '...'
+                                                            : '')));
 
             printEmptyLine();
 
@@ -137,9 +131,7 @@ module.exports = (function () {
             return new Array(process.stdout.columns - 1)
                 .join(',')
                 .split(',')
-                .map(function () {
-                    return char;
-                })
+                .map(() => char)
                 .join('');
         },
 
@@ -147,9 +139,7 @@ module.exports = (function () {
             return new Array(size)
                 .join(',')
                 .split(',')
-                .map(function () {
-                    return char;
-                })
+                .map(() => char)
                 .join('');
         },
 
@@ -158,9 +148,7 @@ module.exports = (function () {
         getCurrentCommandBranch = function () {
             return !currentState.length
                 ? configs
-                : currentState.reduce(function (a, c) {
-                    return a['commands'][c];
-                }, configs);
+                : currentState.reduce((a, c) => a['commands'][c], configs);
         },
 
         getCurrentCommandOptions = function () {
@@ -170,9 +158,7 @@ module.exports = (function () {
         getCommandForOption = function (option) {
             return !currentState.length
                 ? configs.commands[option]
-                : currentState.reduce(function (a, c) {
-                    return a['commands'][c];
-                }, configs).commands[option];
+                : currentState.reduce((a, c) => a['commands'][c], configs).commands[option];
         },
 
         // Keystrokes binding functions
@@ -291,9 +277,8 @@ module.exports = (function () {
                 try {
                     var taskToBeExecuted = [
                         command.task
-                    ].concat(command.params.map(function (p, i) {
-                        return result[command.params[i]];
-                    })).join(' ');
+                    ].concat(command.params.map((p, i) => result[command.params[i]]))
+                        .join(' ');
 
                     executeShellCommand(taskToBeExecuted, command.directory);
                 } catch (e) {
