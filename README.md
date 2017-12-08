@@ -43,13 +43,21 @@ An all-day command-line companion
 
 Run `myterminal-cli` or simply `myterminal` from the command line passing it a path to a JSON configuration file as shown in the [examples](examples). For example, if the configuration file is stored at your home directory, you can run it as
 
-    myterminal-cli ~/configs.json
+    myterminal-cli --config=~/configs.json
 
 *myterminal* will start and the rest should be simple.
 
 You can also start *myterminal* without supplying the configuration file path, in which case it will start with a configuration file named *myterminal-configs.json* placed at your home (~/) directory. If the file does not exist, it will be created when the application is started for the first time.
 
 **Note:** Since the upgrade to version 2, *myterminal* uses an entirely new interface which does not work well on Windows. Hence *myterminal* starts in legacy mode in Windows, which means almost the same functionality, with the old interface.
+
+To force the modern mode in Windows, start *myterminal* as
+
+    myterminal-cli --modern
+
+and to force legacy mode on a *better* computer, start it as
+
+    myterminal-cli --legacy
 
 ## Configuration
 
@@ -62,6 +70,7 @@ Each of the items, be it a command or a group of commands, can have a defined *d
 ## Dependencies
 
 * [blessed](https://www.npmjs.com/package/blessed)
+* [yargs](https://www.npmjs.com/package/yargs)
 * [prompt](https://www.npmjs.com/package/prompt)
 * [clear](https://www.npmjs.com/package/clear)
 * [chalk](https://www.npmjs.com/package/chalk)

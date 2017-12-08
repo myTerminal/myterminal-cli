@@ -2,18 +2,21 @@
 
 /* global require process */
 
-var path = require('path'),
-    os = require('os'),
-    args = process.argv,
-    suppliedRelativeConfigPath = args[2],
-    defaultConfigFilePath = path.resolve(os.homedir(), 'myterminal-configs.json');
+const path = require('path'),
+      os = require('os'),
+      yargs = require('yargs').argv;
 
-var absoluteConfigPath = suppliedRelativeConfigPath
-    ? path.resolve(process.cwd(), suppliedRelativeConfigPath)
-    : defaultConfigFilePath,
-    cliCompanion = os.platform() === 'win32'
-    ? require('./cli-legacy')
-    : require('./cli-modern');
+const suppliedRelativeConfigPath = yargs.config;
+
+const defaultConfigFilePath = path.resolve(os.homedir(), 'myterminal-configs.json');
+
+const absoluteConfigPath = suppliedRelativeConfigPath
+      ? path.resolve(process.cwd(), suppliedRelativeConfigPath)
+      : defaultConfigFilePath;
+
+const cliCompanion = !yargs['modern'] && (yargs['legacy'] || os.platform() === 'win32')
+      ? require('./cli-legacy')
+      : require('./cli-modern');
 
 cliCompanion.copyConfigFileIfNotPresent();
 cliCompanion.setConfigs(require(absoluteConfigPath));
