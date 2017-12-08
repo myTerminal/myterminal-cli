@@ -11,152 +11,9 @@ var path = require('path'),
 
 module.exports = (function () {
 
-    var uiControls = {};
-
-    uiControls.screen = blessed.screen({
-        smartCSR: true,
-        title: 'myterminal-cli v' + version,
-        dockBorders: true
-    });
-
-    uiControls.menuBox = blessed.box({
-        parent: uiControls.screen,
-        left: 0,
-        top: 0,
-        width: '100%',
-        height: '100%',
-        tags: true,
-        style: {
-            bg: '#111'
-        }
-    });
-
-    uiControls.menuBoxTitle = blessed.text({
-        parent: uiControls.menuBox,
-        left: 0,
-        top: 0,
-        width: '100%',
-        height: 'shrink',
-        content: 'myterminal-cli v' + version,
-        tags: true,
-        align: 'center',
-        padding: 1,
-        style: {
-            fg: 'black',
-            bg: '#00FFFF'
-        }
-    });
-
-    uiControls.menuBoxThreader = blessed.text({
-        parent: uiControls.menuBox,
-        left: 0,
-        top: 3,
-        width: '100%',
-        height: 'shrink',
-        content: 'All',
-        tags: true,
-        padding: 1,
-        style: {
-            bg: '#111'
-        }
-    });
-
-    uiControls.menuBoxInstructions = blessed.text({
-        parent: uiControls.menuBox,
-        left: 0,
-        top: 6,
-        width: '100%',
-        height: 'shrink',
-        content: 'Press a marked key to perform the respective operation',
-        tags: true,
-        style: {
-            bg: '#111'
-        }
-    });
-
-    uiControls.menuBoxTable = blessed.text({
-        parent: uiControls.menuBox,
-        left: 0,
-        top: 7,
-        width: '100%',
-        height: 'shrink',
-        content: '{red-fg}(q){/} Quit',
-        tags: true,
-        padding: 1,
-        style: {
-            bg: '#111'
-        }
-    });
-
-    uiControls.commandLogBox = blessed.box({
-        parent: uiControls.screen,
-        left: '50%-1',
-        top: 0,
-        width: '50%+1',
-        height: '100%',
-        border: {
-            type: 'bg',
-            top: false,
-            right: false,
-            bottom: false,
-            left: true
-        },
-        hidden: true,
-        scrollable: true,
-        alwaysScroll: true,
-        tags: true,
-        style: {
-            border: {
-                fg: '#339933'
-            }
-        }
-    });
-
-    uiControls.commandLogBoxTitle = blessed.text({
-        parent: uiControls.commandLogBox,
-        left: 0,
-        top: 0,
-        width: '100%',
-        height: 'shrink',
-        content: '',
-        tags: true,
-        hidden: true,
-        align: 'center',
-        style: {
-            bg: 'green'
-        }
-    });
-
-    uiControls.commandLogBoxSubtitle = blessed.text({
-        parent: uiControls.commandLogBox,
-        left: 0,
-        top: 1,
-        width: '100%',
-        height: 'shrink',
-        content: '',
-        tags: true,
-        hidden: true,
-        align: 'center',
-        style: {
-            fg: 'black',
-            bg: 'white'
-        }
-    });
-
-    uiControls.prompt = blessed.prompt({
-        parent: uiControls.screen,
-        border: 'line',
-        height: 'shrink',
-        width: 'half',
-        top: 'center',
-        left: 'center',
-        label: ' {blue-fg}Enter the value for{/blue-fg} ',
-        tags: true,
-        keys: true,
-        vi: true
-    });
-
     var configs,
+
+        uiControls = {},
 
         // Keys
 
@@ -190,6 +47,158 @@ module.exports = (function () {
 
         setConfigs = function (data) {
             configs = data;
+        },
+
+        init = function () {
+            bindEventForAbortingCurrentCommandOnWindows();
+            drawControls();
+            uiControls.screen.enableKeys();
+            promptForAction();
+        },
+
+        drawControls = function () {
+            uiControls.screen = blessed.screen({
+                smartCSR: true,
+                title: 'myterminal-cli v' + version,
+                dockBorders: true
+            });
+
+            uiControls.menuBox = blessed.box({
+                parent: uiControls.screen,
+                left: 0,
+                top: 0,
+                width: '100%',
+                height: '100%',
+                tags: true,
+                style: {
+                    bg: '#111'
+                }
+            });
+
+            uiControls.menuBoxTitle = blessed.text({
+                parent: uiControls.menuBox,
+                left: 0,
+                top: 0,
+                width: '100%',
+                height: 'shrink',
+                content: 'myterminal-cli v' + version,
+                tags: true,
+                align: 'center',
+                padding: 1,
+                style: {
+                    fg: 'black',
+                    bg: '#00FFFF'
+                }
+            });
+
+            uiControls.menuBoxThreader = blessed.text({
+                parent: uiControls.menuBox,
+                left: 0,
+                top: 3,
+                width: '100%',
+                height: 'shrink',
+                content: 'All',
+                tags: true,
+                padding: 1,
+                style: {
+                    bg: '#111'
+                }
+            });
+
+            uiControls.menuBoxInstructions = blessed.text({
+                parent: uiControls.menuBox,
+                left: 0,
+                top: 6,
+                width: '100%',
+                height: 'shrink',
+                content: 'Press a marked key to perform the respective operation',
+                tags: true,
+                style: {
+                    bg: '#111'
+                }
+            });
+
+            uiControls.menuBoxTable = blessed.text({
+                parent: uiControls.menuBox,
+                left: 0,
+                top: 7,
+                width: '100%',
+                height: 'shrink',
+                content: '{red-fg}(q){/} Quit',
+                tags: true,
+                padding: 1,
+                style: {
+                    bg: '#111'
+                }
+            });
+
+            uiControls.commandLogBox = blessed.box({
+                parent: uiControls.screen,
+                left: '50%-1',
+                top: 0,
+                width: '50%+1',
+                height: '100%',
+                border: {
+                    type: 'bg',
+                    top: false,
+                    right: false,
+                    bottom: false,
+                    left: true
+                },
+                hidden: true,
+                scrollable: true,
+                alwaysScroll: true,
+                tags: true,
+                style: {
+                    border: {
+                        fg: '#339933'
+                    }
+                }
+            });
+
+            uiControls.commandLogBoxTitle = blessed.text({
+                parent: uiControls.commandLogBox,
+                left: 0,
+                top: 0,
+                width: '100%',
+                height: 'shrink',
+                content: '',
+                tags: true,
+                hidden: true,
+                align: 'center',
+                style: {
+                    bg: 'green'
+                }
+            });
+
+            uiControls.commandLogBoxSubtitle = blessed.text({
+                parent: uiControls.commandLogBox,
+                left: 0,
+                top: 1,
+                width: '100%',
+                height: 'shrink',
+                content: '',
+                tags: true,
+                hidden: true,
+                align: 'center',
+                style: {
+                    fg: 'black',
+                    bg: 'white'
+                }
+            });
+
+            uiControls.prompt = blessed.prompt({
+                parent: uiControls.screen,
+                border: 'line',
+                height: 'shrink',
+                width: 'half',
+                top: 'center',
+                left: 'center',
+                label: ' {blue-fg}Enter the value for{/blue-fg} ',
+                tags: true,
+                keys: true,
+                vi: true
+            });
         },
 
         promptForAction = function () {
@@ -520,12 +529,9 @@ module.exports = (function () {
             clear();
         };
 
-    bindEventForAbortingCurrentCommandOnWindows();
-    uiControls.screen.enableKeys();
-
     return {
         copyConfigFileIfNotPresent: copyConfigFileIfNotPresent,
         setConfigs: setConfigs,
-        promptForAction: promptForAction
+        init: init
     };
 })();

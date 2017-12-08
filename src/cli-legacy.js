@@ -38,6 +38,11 @@ module.exports = (function () {
             configs = data;
         },
 
+        init = function () {
+            bindEventForAbortingCurrentCommandOnWindows();
+            promptForAction();
+        },
+
         promptForAction = function () {
             rePrintMenu();
             bindKeyStrokesToNavigate();
@@ -369,11 +374,9 @@ module.exports = (function () {
             process.exit();
         };
 
-    bindEventForAbortingCurrentCommandOnWindows();
-
     return {
         copyConfigFileIfNotPresent: copyConfigFileIfNotPresent,
         setConfigs: setConfigs,
-        promptForAction: promptForAction
+        init: init
     };
 })();

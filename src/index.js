@@ -20,4 +20,4 @@ const cliCompanion = !yargs['modern'] && (yargs['legacy'] || os.platform() === '
 
 cliCompanion.copyConfigFileIfNotPresent();
 cliCompanion.setConfigs(require(absoluteConfigPath));
-cliCompanion.promptForAction();
+cliCompanion.init();
