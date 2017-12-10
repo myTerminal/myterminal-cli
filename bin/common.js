@@ -1,0 +1,1 @@
+"use strict";var path=require("path"),os=require("os"),fse=require("fs-extra"),defaultConfigFilePath=path.resolve(os.homedir(),"myterminal-configs.json"),common={copyConfigFileIfNotPresent:function(){fse.copySync(path.resolve(__dirname,"../examples/configs.json"),defaultConfigFilePath,{overwrite:!1})}};module.exports=common;

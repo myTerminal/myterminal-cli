@@ -1,15 +1,12 @@
-/* global require module __dirname process */
+/* global require module process */
 
-var path = require('path'),
-    os = require('os'),
+var os = require('os'),
     spawn = require('child_process').spawn,
     stdin = process.stdin,
     prompt = require('prompt'),
     chalk = require('chalk'),
     clear = require('clear'),
-    fse = require('fs-extra'),
-    version = require('../package.json').version,
-    defaultConfigFilePath = path.resolve(os.homedir(), 'myterminal-configs.json');
+    version = require('../package.json').version;
 
 module.exports = (function () {
 
@@ -26,13 +23,6 @@ module.exports = (function () {
         currentCommandInstance,
 
         // User facing functions
-
-        copyConfigFileIfNotPresent = function () {
-            fse.copySync(path.resolve(__dirname, '../examples/configs.json'),
-                         defaultConfigFilePath, {
-                             overwrite: false
-                         });
-        },
 
         setConfigs = function (data) {
             configs = data;
@@ -375,7 +365,6 @@ module.exports = (function () {
         };
 
     return {
-        copyConfigFileIfNotPresent: copyConfigFileIfNotPresent,
         setConfigs: setConfigs,
         init: init
     };

@@ -14,10 +14,12 @@ const absoluteConfigPath = suppliedRelativeConfigPath
       ? path.resolve(process.cwd(), suppliedRelativeConfigPath)
       : defaultConfigFilePath;
 
+const common = require('./common');
+
 const cliCompanion = !yargs['modern'] && (yargs['legacy'] || os.platform() === 'win32')
       ? require('./cli-legacy')
       : require('./cli-modern');
 
-cliCompanion.copyConfigFileIfNotPresent();
+common.copyConfigFileIfNotPresent();
 cliCompanion.setConfigs(require(absoluteConfigPath));
 cliCompanion.init();
