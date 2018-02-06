@@ -1,7 +1,5 @@
 # myterminal
 
-An all-day command-line companion
-
 [![npm version](https://badge.fury.io/js/myterminal.svg)](https://badge.fury.io/js/myterminal)
 [![npm downloads](https://img.shields.io/npm/dt/myterminal.svg)](https://www.npmjs.com/package/myterminal)  
 [![Build Status](https://travis-ci.org/myTerminal/myterminal.svg?branch=master)](https://travis-ci.org/myTerminal/myterminal)
@@ -15,6 +13,8 @@ An all-day command-line companion
 [![peer Dependency Status](https://david-dm.org/myTerminal/myterminal/peer-status.svg)](https://david-dm.org/myTerminal/myterminal#info=peerDependencies)  
 [![License](https://img.shields.io/badge/LICENSE-GPL%20v3.0-blue.svg)](https://www.gnu.org/licenses/gpl.html)  
 [![NPM](https://nodei.co/npm/myterminal.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/myterminal/)
+
+An all-day command-line companion
 
 ![Demo](images/demo.gif)
 
