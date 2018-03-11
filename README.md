@@ -4,7 +4,6 @@
 [![npm downloads](https://img.shields.io/npm/dt/myterminal.svg)](https://www.npmjs.com/package/myterminal)  
 [![Build Status](https://travis-ci.org/myTerminal/myterminal.svg?branch=master)](https://travis-ci.org/myTerminal/myterminal)
 [![Code Climate](https://codeclimate.com/github/myTerminal/myterminal.png)](https://codeclimate.com/github/myTerminal/myterminal)
-[![Package Quality](http://npm.packagequality.com/shield/myterminal.svg)](http://packagequality.com/#?package=myterminal)
 [![Coverage Status](https://img.shields.io/coveralls/myTerminal/myterminal.svg)](https://coveralls.io/r/myTerminal/myterminal?branch=master)
 [![bitHound Overall Score](https://www.bithound.io/github/myTerminal/myterminal/badges/score.svg)](https://www.bithound.io/github/myTerminal/myterminal)
 [![bitHound Code](https://www.bithound.io/github/myTerminal/myterminal/badges/code.svg)](https://www.bithound.io/github/myTerminal/myterminal)  
