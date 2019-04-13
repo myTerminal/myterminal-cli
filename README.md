@@ -57,7 +57,7 @@ and to force legacy mode on a *better* computer, start it as
 
 ## Configuration
 
-The configuration file should contain a valid JSON. It consists of nodes having a *title* and a subtree called *commands*. Each of these nodes hold a group of commands. The tree within contains a single character with which the group can be selected while the application is running. When a node has a property *task* instead of *commands*, it is treated as a command to be executed, rather than a group of commands.
+The configuration file should contain a valid JSON. It consists of nodes having a *title* and a subtree called *commands*. Each of these nodes holds a group of commands. The tree contains a single character with which the group can be selected while the application is running. When a node has a property *task* instead of *commands*, it is treated as a command to be executed, rather than a group of commands.
 
 Each command has a *title*, a *task* and optionally an array of *params*. These params are prompted to be entered by the user while executing the *task* and are appended to the task separated by spaces, in sequence as they appear in the *params* array to form the final command to be executed.
 
