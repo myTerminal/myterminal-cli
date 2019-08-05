@@ -22,7 +22,7 @@
     "git"
   ],
   "author": "Mohammed Ismail Ansari <team.terminal@gmail.com>",
-  "license": "GPL-3.0",
+  "license": "MIT",
   "preferGlobal": "true",
   "dependencies": {
     "blessed": "0.1.81",
