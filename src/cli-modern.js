@@ -1,13 +1,11 @@
 /* global require module process */
 
-var os = require('os'),
-    spawn = require('child_process').spawn,
+const { spawn } = require('child_process'),
     blessed = require('blessed'),
     clear = require('clear'),
-    version = require('../package.json').version;
+    { version } = require('../package.json');
 
-module.exports = (function () {
-
+module.exports = (() => {
     var configs,
 
         uiControls = {},
@@ -35,21 +33,21 @@ module.exports = (function () {
 
         // User facing functions
 
-        setConfigs = function (data) {
+        setConfigs = data => {
             configs = data;
         },
 
-        init = function () {
+        init = () => {
             bindEventForAbortingCurrentCommandOnWindows();
             drawControls();
             uiControls.screen.enableKeys();
             promptForAction();
         },
 
-        drawControls = function () {
+        drawControls = () => {
             uiControls.screen = blessed.screen({
                 smartCSR: true,
-                title: 'myterminal-cli v' + version,
+                title: `myterminal-cli v${version}`,
                 dockBorders: true
             });
 
@@ -71,7 +69,7 @@ module.exports = (function () {
                 top: 0,
                 width: '100%',
                 height: 'shrink',
-                content: 'myterminal-cli v' + version,
+                content: `myterminal-cli v${version}`,
                 tags: true,
                 align: 'center',
                 padding: 1,
@@ -191,159 +189,160 @@ module.exports = (function () {
             });
         },
 
-        promptForAction = function () {
+        promptForAction = () => {
             rePrintMenu();
             bindKeyStrokesToNavigate();
         },
 
         // Display related functions
 
-        clearLog = function () {
+        clearLog = () => {
             uiControls.commandLogBox.setContent('');
         },
 
-        rePrintMenu = function () {
+        rePrintMenu = () => {
             updateThreaderText();
             updateMenuOptions();
             uiControls.screen.render();
         },
 
-        updateThreaderText = function () {
-            var threads = currentState.map((s, i) => currentState.slice(0, i + 1))
-                .map((s, i) => s.reduce((a, c) => a.commands[c], configs))
+        updateThreaderText = () => {
+            const threads = currentState.map((s, i) => currentState.slice(0, i + 1))
+                .map(s => s.reduce((a, c) => a.commands[c], configs))
                 .map(s => s.title);
 
-            var threaderText = [configs.title]
+            const threaderText = [configs.title]
                 .concat(threads)
-                .map(t => '{#00FFFF-fg}' + t + '{/}')
+                .map(t => `{#00FFFF-fg}${t}{/}`)
                 .join(' -> ');
 
             uiControls.menuBoxThreader.setContent(threaderText);
         },
 
-        updateMenuOptions = function () {
-            var currentCommandBranch = getCurrentCommandBranch(),
+        updateMenuOptions = () => {
+            const currentCommandBranch = getCurrentCommandBranch(),
                 menuItems = [];
 
-            getCurrentCommandOptions().forEach(k =>
-                                               menuItems.push(('{green-fg}(' + k + '){/} ')
-                                                              + currentCommandBranch.commands[k]['title'] +
-                                                              (currentCommandBranch.commands[k].commands
-                                                               ? '...'
-                                                               : '')));
+            getCurrentCommandOptions().forEach(
+                k => {
+                    menuItems.push(
+                        `{green-fg}(${k}){/} ${currentCommandBranch.commands[k].title}${(currentCommandBranch.commands[k].commands ? '...' : '')}`
+                    );
+                }
+            );
 
             menuItems.push('');
 
             if (mostRecentlyRunCommand) {
-                menuItems.push('{green-fg}(;){/} ' + 'Select the last action');
+                menuItems.push('{green-fg}(;){/} Select the last action');
             }
 
             if (lastRunShellCommand) {
-                menuItems.push('{green-fg}(.){/} ' + 'Re-run the last command');
+                menuItems.push('{green-fg}(.){/} Re-run the last command');
             }
 
-            menuItems.push('{green-fg}(/){/} ' + 'Run a custom command');
+            menuItems.push('{green-fg}(/){/} Run a custom command');
 
             menuItems.push('');
 
             if (currentCommandBranch !== configs) {
-                menuItems.push('{red-fg}(q){/} ' + 'Go back...');
+                menuItems.push('{red-fg}(q){/} Go back...');
             } else {
-                menuItems.push('{red-fg}(q){/} ' + 'Quit');
+                menuItems.push('{red-fg}(q){/} Quit');
             }
 
             uiControls.menuBoxTable.setContent(menuItems.join('\n'));
         },
 
-        printCommandLogHeader = function (commandObject) {
+        printCommandLogHeader = commandObject => {
             clearLog();
-            uiControls.commandLogBoxTitle.setContent('{green-bg}Command: ' + (commandObject.title || commandObject.task) + '{/}');
+            uiControls.commandLogBoxTitle.setContent(`{green-bg}Command: ${(commandObject.title || commandObject.task)}{/}`);
             uiControls.commandLogBoxTitle.show();
-            uiControls.commandLogBoxSubtitle.setContent('{white-bg}Directory: ' + getSpecificCommandDirectory(commandObject.directory) + '{/}');
+            uiControls.commandLogBoxSubtitle.setContent(`{white-bg}Directory: ${getSpecificCommandDirectory(commandObject.directory)}{/}`);
             uiControls.commandLogBoxSubtitle.show();
             uiControls.commandLogBox.insertBottom('');
             uiControls.commandLogBox.insertBottom('');
             uiControls.screen.render();
         },
 
-        printCommandLogFooter = function () {
+        printCommandLogFooter = () => {
             uiControls.commandLogBox.insertBottom('{green-bg}Done{/}');
             uiControls.commandLogBox.setScrollPerc(100);
             uiControls.screen.render();
         },
 
-        printCommandAbortInstructions = function () {
+        printCommandAbortInstructions = () => {
             uiControls.menuBoxTable.insertBottom('\nYou can press {yellow-fg}(\\){/} to abort current task');
         },
 
         // Command parsing functions
 
-        getCurrentCommandBranch = function () {
-            return !currentState.length
-                ? configs
-                : currentState.reduce((a, c) => a['commands'][c], configs);
+        getCurrentCommandBranch = () => {
+            if (!currentState.length) {
+                return configs;
+            } else {
+                return currentState.reduce((a, c) => a.commands[c], configs);
+            }
         },
 
-        getCurrentCommandOptions = function () {
-            return Object.keys(getCurrentCommandBranch().commands);
-        },
+        getCurrentCommandOptions = () =>
+            Object.keys(getCurrentCommandBranch().commands),
 
-        getCommandForOption = function (option) {
-            return !currentState.length
-                ? configs.commands[option]
-                : currentState.reduce((a, c) => a['commands'][c], configs).commands[option];
+        getCommandForOption = option => {
+            if (!currentState.length) {
+                return configs.commands[option];
+            } else {
+                return currentState.reduce((a, c) => a.commands[c], configs).commands[option];
+            }
         },
 
         // Keystrokes binding functions
 
-        bindKeyStrokesToNavigate = function () {
+        bindKeyStrokesToNavigate = () => {
             getCurrentCommandOptions()
                 .concat(specialKeys)
                 .forEach(key => uiControls.screen.key(key, keyStrokeHandlerForNavigation));
         },
 
-        unbindKeyStrokesToNavigate = function () {
+        unbindKeyStrokesToNavigate = () => {
             getCurrentCommandOptions()
                 .concat(specialKeys)
                 .forEach(key => uiControls.screen.unkey(key));
         },
 
-        bindKeyStrokesToQuitCurrentCommand = function () {
+        bindKeyStrokesToQuitCurrentCommand = () => {
             uiControls.screen.key('\\', keyStrokeHandlerForQuittingCurrentCommand);
         },
 
-        unbindKeyStrokesToQuitCurrentCommand = function () {
+        unbindKeyStrokesToQuitCurrentCommand = () => {
             uiControls.screen.unkey('\\');
         },
 
-        bindEventForAbortingCurrentCommandOnWindows = function () {
-            process.on('SIGINT', function () {
-                if (currentCommandInstance) {
-                    abortCurrentShellCommand();
-                } else {
-                    process.exit();
+        bindEventForAbortingCurrentCommandOnWindows = () => {
+            process.on(
+                'SIGINT',
+                () => {
+                    if (currentCommandInstance) {
+                        abortCurrentShellCommand();
+                    } else {
+                        process.exit();
+                    }
                 }
-            });
+            );
         },
 
         // Keystrokes handlers
 
-        keyStrokeHandlerForNavigation = function (key) {
-
+        keyStrokeHandlerForNavigation = key => {
             unbindKeyStrokesToNavigate();
 
             if (key === 'C-c' || key === 'C-q') { // This does not seem to work with blessed
-
                 exit();
-
             } else if (key === '/') {
-
                 rePrintMenu();
                 printCommandAbortInstructions();
                 promptForCustomCommandAndExecute();
-
             } else if (key === ';') {
-
                 if (mostRecentlyRunCommand) {
                     rePrintMenu();
                     printCommandAbortInstructions();
@@ -351,9 +350,7 @@ module.exports = (function () {
                 } else {
                     promptForAction();
                 }
-
             } else if (key === '.') {
-
                 if (lastRunShellCommand) {
                     rePrintMenu();
                     printCommandAbortInstructions();
@@ -362,20 +359,16 @@ module.exports = (function () {
                 } else {
                     promptForAction();
                 }
-
             } else if (key === 'q') {
-
                 if (!currentState.length) {
                     exit();
                 }
 
                 currentState.pop();
                 promptForAction();
-
             } else if (getCurrentCommandOptions().indexOf(key) > -1) {
-
-                var selectedCommand = getCommandForOption(key),
-                    task = selectedCommand.task;
+                const selectedCommand = getCommandForOption(key),
+                    { task } = selectedCommand;
 
                 if (task) {
                     rePrintMenu();
@@ -385,15 +378,12 @@ module.exports = (function () {
                     currentState.push(key);
                     promptForAction();
                 }
-
             } else {
-
                 promptForAction();
-
             }
         },
 
-        keyStrokeHandlerForQuittingCurrentCommand = function (key) {
+        keyStrokeHandlerForQuittingCurrentCommand = () => {
             uiControls.commandLogBox.insertBottom('{magenta-bg}Aborted{/}');
             uiControls.commandLogBox.setScrollPerc(100);
             abortCurrentShellCommand();
@@ -401,37 +391,48 @@ module.exports = (function () {
 
         // Command execution
 
-        gatherParamsAndExecuteCommand = function (command) {
-            promptUserForParametersAndExecuteCommand([], command.params, function (receivedParams) {
-                var taskToBeExecuted = [
-                    command.task
-                ].concat(receivedParams).join(' ');
+        gatherParamsAndExecuteCommand = command => {
+            promptUserForParametersAndExecuteCommand(
+                [],
+                command.params,
+                receivedParams => {
+                    const taskToBeExecuted = [
+                        command.task
+                    ].concat(receivedParams).join(' ');
 
-                executeShellCommand(taskToBeExecuted, command.directory);
-            });
+                    executeShellCommand(taskToBeExecuted, command.directory);
+                }
+            );
         },
 
-        promptUserForParametersAndExecuteCommand = function (receivedParams, paramsToPrompt, onDone) {
+        promptUserForParametersAndExecuteCommand = (receivedParams, paramsToPrompt, onDone) => {
             if (receivedParams.length === paramsToPrompt.length) {
                 onDone(receivedParams);
             } else {
-                uiControls.prompt.input(paramsToPrompt[receivedParams.length], '', function(err, result) {
-                    try {
-                        promptUserForParametersAndExecuteCommand(receivedParams.concat([result]), paramsToPrompt, onDone);
-                    } catch (e) {
-                        uiControls.commandLogBox.insertBottom('{red-bg}' + e.toString() + '{/}');
-                        uiControls.commandLogBox.setScrollPerc(100);
-                        promptForAction();
+                uiControls.prompt.input(
+                    paramsToPrompt[receivedParams.length],
+                    '',
+                    (err, result) => {
+                        try {
+                            promptUserForParametersAndExecuteCommand(
+                                receivedParams.concat([result]),
+                                paramsToPrompt,
+                                onDone
+                            );
+                        } catch (e) {
+                            uiControls.commandLogBox.insertBottom(`{red-bg}${e.toString()}{/}`);
+                            uiControls.commandLogBox.setScrollPerc(100);
+                            promptForAction();
+                        }
                     }
-                });
+                );
             }
         },
 
-        getSpecificCommandDirectory = function (directory) {
-            return directory || getCurrentCommandBranch().directory || '.';
-        },
+        getSpecificCommandDirectory = directory =>
+            directory || getCurrentCommandBranch().directory || '.',
 
-        prepareToExecuteCommandObject = function (command) {
+        prepareToExecuteCommandObject = command => {
             mostRecentlyRunCommand = command;
 
             uiControls.menuBox.width = '50%';
@@ -446,23 +447,27 @@ module.exports = (function () {
             }
         },
 
-        promptForCustomCommandAndExecute = function () {
-            promptUserForParametersAndExecuteCommand([], [
-                'custom-command',
-                'directory'
-            ], function(receivedParams) {
-                var directory = getSpecificCommandDirectory(receivedParams[1]);
+        promptForCustomCommandAndExecute = () => {
+            promptUserForParametersAndExecuteCommand(
+                [],
+                [
+                    'custom-command',
+                    'directory'
+                ],
+                receivedParams => {
+                    const directory = getSpecificCommandDirectory(receivedParams[1]);
 
-                prepareToExecuteCommandObject({
-                    title: receivedParams[0],
-                    task: receivedParams[0],
-                    directory: directory
-                });
-            });
+                    prepareToExecuteCommandObject({
+                        title: receivedParams[0],
+                        task: receivedParams[0],
+                        directory: directory
+                    });
+                }
+            );
         },
 
-        executeShellCommand = function (command, directory) {
-            var commandWords = command.split(' '),
+        executeShellCommand = (command, directory) => {
+            const commandWords = command.split(' '),
                 commandName = commandWords[0],
                 commandArguments = commandWords.slice(1),
                 commandDirectory = getSpecificCommandDirectory(directory);
@@ -477,18 +482,24 @@ module.exports = (function () {
                 shell: true
             });
 
-            currentCommandInstance.stdout.on('data', function (data) {
-                uiControls.commandLogBox.insertBottom(data.toString());
-                uiControls.commandLogBox.setScrollPerc(100);
-                uiControls.screen.render();
-            });
+            currentCommandInstance.stdout.on(
+                'data',
+                data => {
+                    uiControls.commandLogBox.insertBottom(data.toString());
+                    uiControls.commandLogBox.setScrollPerc(100);
+                    uiControls.screen.render();
+                }
+            );
 
-            currentCommandInstance.stderr.on('data', function (data) {
-                uiControls.commandLogBox.insertBottom('{red-bg}Error{/}');
-                uiControls.commandLogBox.insertBottom('{red-fg}' + data.toString() + '{/}');
-                uiControls.commandLogBox.setScrollPerc(100);
-                uiControls.screen.render();
-            });
+            currentCommandInstance.stderr.on(
+                'data',
+                data => {
+                    uiControls.commandLogBox.insertBottom('{red-bg}Error{/}');
+                    uiControls.commandLogBox.insertBottom(`{red-fg}${data.toString()}{/}`);
+                    uiControls.commandLogBox.setScrollPerc(100);
+                    uiControls.screen.render();
+                }
+            );
 
             currentCommandInstance.on('close', finishUpWithCurrentCommand);
 
@@ -497,12 +508,12 @@ module.exports = (function () {
 
         // Command abortion and clean-up
 
-        abortCurrentShellCommand = function () {
+        abortCurrentShellCommand = () => {
             currentCommandInstance.kill();
             currentCommandInstance = null;
         },
 
-        finishUpWithCurrentCommand = function () {
+        finishUpWithCurrentCommand = () => {
             printCommandLogFooter();
             rePrintMenu();
 
@@ -514,7 +525,7 @@ module.exports = (function () {
 
         // Exit
 
-        exit = function () {
+        exit = () => {
             uiControls.screen.destroy();
             clear();
         };

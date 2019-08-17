@@ -1,15 +1,13 @@
 /* global require module process */
 
-var os = require('os'),
-    spawn = require('child_process').spawn,
-    stdin = process.stdin,
+const { spawn } = require('child_process'),
+    { stdin } = process,
     prompt = require('prompt'),
     chalk = require('chalk'),
     clear = require('clear'),
-    version = require('../package.json').version;
+    { version } = require('../package.json');
 
-module.exports = (function () {
-
+module.exports = (() => {
     var configs,
 
         // State storage
@@ -24,23 +22,23 @@ module.exports = (function () {
 
         // User facing functions
 
-        setConfigs = function (data) {
+        setConfigs = data => {
             configs = data;
         },
 
-        init = function () {
+        init = () => {
             bindEventForAbortingCurrentCommandOnWindows();
             promptForAction();
         },
 
-        promptForAction = function () {
+        promptForAction = () => {
             rePrintMenu();
             bindKeyStrokesToNavigate();
         },
 
         // Display related functions
 
-        rePrintMenu = function () {
+        rePrintMenu = () => {
             clear();
             printMenuHeader();
             printMenuBreadCrumbs();
@@ -48,167 +46,170 @@ module.exports = (function () {
             printMenuOptions();
         },
 
-        printMenuHeader = function () {
-            var centeredTitle = getCenteredText('myterminal-cli v' + version);
+        printMenuHeader = () => {
+            const centeredTitle = getCenteredText(`myterminal-cli v${version}`);
 
             console.log(chalk.inverse.cyan(getSeparator(' ')));
             console.log(chalk.inverse.cyan(centeredTitle));
-            console.log(chalk.inverse.cyan(getSeparator(' ')) + '\n');
+            console.log(`${chalk.inverse.cyan(getSeparator(' '))}\n`);
         },
 
-        printMenuBreadCrumbs = function () {
-            var breadCrumbs = currentState
+        printMenuBreadCrumbs = () => {
+            const breadCrumbs = currentState
                 .map((s, i) => currentState.slice(0, i + 1))
-                .map((s, i) => s.reduce((a, c) => a.commands[c], configs))
+                .map((s) => s.reduce((a, c) => a.commands[c], configs))
                 .map(s => s.title);
 
-            console.log(chalk.cyan([configs.title].concat(breadCrumbs).join(' -> ') + '\n'));
+            console.log(chalk.cyan(`${[configs.title].concat(breadCrumbs).join(' -> ')}'\n'`));
         },
 
-        printMenuInstructions = function () {
+        printMenuInstructions = () => {
             console.log('Press a marked key to perform the respective operation\n');
         },
 
-        printMenuOptions = function () {
-            var currentCommandBranch = getCurrentCommandBranch();
+        printMenuOptions = () => {
+            const currentCommandBranch = getCurrentCommandBranch();
 
-            getCurrentCommandOptions().forEach(k =>
-                                               console.log(chalk.green('(' + k + ') ')
-                                                           + currentCommandBranch.commands[k]['title'] +
-                                                           (currentCommandBranch.commands[k].commands
-                                                            ? '...'
-                                                            : '')));
+            getCurrentCommandOptions().forEach(
+                k => {
+                    console.log(
+                        chalk.green(`(${k}) ${currentCommandBranch.commands[k].title}`)
+                            + (currentCommandBranch.commands[k].commands
+                                ? '...'
+                                : '')
+                    );
+                }
+            );
 
             printEmptyLine();
 
             if (mostRecentlyRunCommand) {
-                console.log(chalk.green('(;) ') + 'Select the last action');
+                console.log(`${chalk.green('(;) ')}Select the last action`);
             }
 
             if (lastRunShellCommand) {
-                console.log(chalk.green('(.) ') + 'Re-run the last command');
+                console.log(`${chalk.green('(.) ')}Re-run the last command`);
             }
 
-            console.log(chalk.green('(/) ') + 'Run a custom command');
+            console.log(`${chalk.green('(/) ')}Run a custom command`);
 
             if (currentCommandBranch !== configs) {
-                console.log(chalk.red('\n(q) ') + 'Go back...' + '\n');
+                console.log(`${chalk.red('\n(q) ')}Go back...\n`);
             } else {
-                console.log(chalk.red('\n(q) ') + 'Quit' + '\n');
+                console.log(`${chalk.red('\n(q) ')}Quit\n`);
             }
         },
 
-        printCommandLogHeader = function (commandObject) {
-            console.log(chalk.inverse.green(getCenteredText('Command: ' + (commandObject.title || commandObject.task))));
-            console.log(chalk.inverse.white(getCenteredText('Directory: ' + getSpecificCommandDirectory(commandObject.directory))));
+        printCommandLogHeader = commandObject => {
+            console.log(chalk.inverse.green(getCenteredText(`Command: ${(commandObject.title || commandObject.task)}`)));
+            console.log(chalk.inverse.white(getCenteredText(`Directory: ${getSpecificCommandDirectory(commandObject.directory)}`)));
             printEmptyLine();
         },
 
-        printCommandAbortInstructions = function () {
+        printCommandAbortInstructions = () => {
             console.log('You can press ^-C to abort current task\n');
         },
 
-        printEmptyLine = function () {
+        printEmptyLine = () => {
             console.log('');
         },
 
         // Display related helpers
 
-        getCenteredText = function (text) {
-            var fillerSize = getSeparator(' ').length - text.length;
+        getCenteredText = text => {
+            const fillerSize = getSeparator(' ').length - text.length;
 
             return getString(' ', Math.floor(fillerSize / 2))
                 + text
                 + getString(' ', Math.ceil(fillerSize / 2));
         },
 
-        getSeparator = function (char) {
-            return new Array(process.stdout.columns - 1)
+        getSeparator = char =>
+            new Array(process.stdout.columns - 1)
                 .join(',')
                 .split(',')
                 .map(() => char)
-                .join('');
-        },
+                .join(''),
 
-        getString = function (char, size) {
-            return new Array(size)
+        getString = (char, size) =>
+            new Array(size)
                 .join(',')
                 .split(',')
                 .map(() => char)
-                .join('');
-        },
+                .join(''),
 
         // Command parsing functions
 
-        getCurrentCommandBranch = function () {
-            return !currentState.length
-                ? configs
-                : currentState.reduce((a, c) => a['commands'][c], configs);
+        getCurrentCommandBranch = () => {
+            if (!currentState.length) {
+                return configs;
+            } else {
+                return currentState.reduce((a, c) => a.commands[c], configs);
+            }
         },
 
-        getCurrentCommandOptions = function () {
-            return Object.keys(getCurrentCommandBranch().commands);
-        },
+        getCurrentCommandOptions = () =>
+            Object.keys(getCurrentCommandBranch().commands),
 
-        getCommandForOption = function (option) {
-            return !currentState.length
-                ? configs.commands[option]
-                : currentState.reduce((a, c) => a['commands'][c], configs).commands[option];
+        getCommandForOption = option => {
+            if (!currentState.length) {
+                return configs.commands[option];
+            } else {
+                return currentState.reduce((a, c) => a.commands[c], configs).commands[option];
+            }
         },
 
         // Keystrokes binding functions
 
-        bindKeyStrokesToNavigate = function () {
+        bindKeyStrokesToNavigate = () => {
             listenToKeyStrokes();
             stdin.on('data', keyStrokeHandlerForNavigation);
         },
 
-        unbindKeyStrokesToNavigate = function () {
+        unbindKeyStrokesToNavigate = () => {
             stdin.removeListener('data', keyStrokeHandlerForNavigation);
         },
 
-        bindKeyStrokesToQuitCurrentCommand = function () {
+        bindKeyStrokesToQuitCurrentCommand = () => {
             listenToKeyStrokes();
             stdin.on('data', keyStrokeHandlerForQuittingCurrentCommand);
         },
 
-        unbindKeyStrokesToQuitCurrentCommand = function () {
+        unbindKeyStrokesToQuitCurrentCommand = () => {
             stdin.removeListener('data', keyStrokeHandlerForQuittingCurrentCommand);
         },
 
-        listenToKeyStrokes = function () {
+        listenToKeyStrokes = () => {
             stdin.setRawMode(true);
             stdin.resume();
             stdin.setEncoding('utf8');
         },
 
-        bindEventForAbortingCurrentCommandOnWindows = function () {
-            process.on('SIGINT', function () {
-                if (currentCommandInstance) {
-                    abortCurrentShellCommand();
-                } else {
-                    process.exit();
+        bindEventForAbortingCurrentCommandOnWindows = () => {
+            process.on(
+                'SIGINT',
+                () => {
+                    if (currentCommandInstance) {
+                        abortCurrentShellCommand();
+                    } else {
+                        process.exit();
+                    }
                 }
-            });
+            );
         },
 
         // Keystrokes handlers
 
-        keyStrokeHandlerForNavigation = function (key) {
+        keyStrokeHandlerForNavigation = key => {
             unbindKeyStrokesToNavigate();
 
             if (key === '\u0003') {
-
                 exit();
-
             } else if (key === '/') {
-
                 rePrintMenu();
                 printCommandAbortInstructions();
                 promptForCustomCommandAndExecute();
-
             } else if (key === ';') {
-
                 if (mostRecentlyRunCommand) {
                     rePrintMenu();
                     printCommandAbortInstructions();
@@ -216,9 +217,7 @@ module.exports = (function () {
                 } else {
                     promptForAction();
                 }
-
             } else if (key === '.') {
-
                 if (lastRunShellCommand) {
                     rePrintMenu();
                     printCommandAbortInstructions();
@@ -227,20 +226,16 @@ module.exports = (function () {
                 } else {
                     promptForAction();
                 }
-
             } else if (key === 'q') {
-
                 if (!currentState.length) {
                     exit();
                 }
 
                 currentState.pop();
                 promptForAction();
-
             } else if (getCurrentCommandOptions().indexOf(key) > -1) {
-
-                var selectedCommand = getCommandForOption(key),
-                    task = selectedCommand.task;
+                const selectedCommand = getCommandForOption(key),
+                    { task } = selectedCommand;
 
                 if (task) {
                     rePrintMenu();
@@ -250,15 +245,12 @@ module.exports = (function () {
                     currentState.push(key);
                     promptForAction();
                 }
-
             } else {
-
                 promptForAction();
-
             }
         },
 
-        keyStrokeHandlerForQuittingCurrentCommand = function (key) {
+        keyStrokeHandlerForQuittingCurrentCommand = key => {
             if (key === '\u0003') {
                 abortCurrentShellCommand();
             }
@@ -266,27 +258,32 @@ module.exports = (function () {
 
         // Command execution
 
-        gatherParamsAndExecuteCommand = function (command) {
+        gatherParamsAndExecuteCommand = command => {
             prompt.start();
-            prompt.get(command.params, function(err, result) {
-                try {
-                    var taskToBeExecuted = [
-                        command.task
-                    ].concat(command.params.map((p, i) => result[command.params[i]]))
-                        .join(' ');
+            prompt.get(
+                command.params,
+                (err, result) => {
+                    try {
+                        const taskToBeExecuted = [
+                            command.task
+                        ].concat(
+                            command.params.map(
+                                (p, i) => result[command.params[i]]
+                            )
+                        ).join(' ');
 
-                    executeShellCommand(taskToBeExecuted, command.directory);
-                } catch (e) {
-                    promptForAction();
+                        executeShellCommand(taskToBeExecuted, command.directory);
+                    } catch (e) {
+                        promptForAction();
+                    }
                 }
-            });
+            );
         },
 
-        getSpecificCommandDirectory = function (directory) {
-            return directory || getCurrentCommandBranch().directory || '.';
-        },
+        getSpecificCommandDirectory = directory =>
+            directory || getCurrentCommandBranch().directory || '.',
 
-        prepareToExecuteCommandObject = function (command) {
+        prepareToExecuteCommandObject = command => {
             mostRecentlyRunCommand = command;
 
             printCommandLogHeader(command);
@@ -298,30 +295,33 @@ module.exports = (function () {
             }
         },
 
-        promptForCustomCommandAndExecute = function () {
+        promptForCustomCommandAndExecute = () => {
             prompt.start();
-            prompt.get([
-                'custom-command',
-                'directory'
-            ], function(err, result) {
-                try {
-                    var directory = getSpecificCommandDirectory(result['directory']);
+            prompt.get(
+                [
+                    'custom-command',
+                    'directory'
+                ],
+                (err, result) => {
+                    try {
+                        const directory = getSpecificCommandDirectory(result.directory);
 
-                    printEmptyLine();
+                        printEmptyLine();
 
-                    prepareToExecuteCommandObject({
-                        title: result['custom-command'],
-                        task: result['custom-command'],
-                        directory: directory
-                    });
-                } catch (e) {
-                    promptForAction();
+                        prepareToExecuteCommandObject({
+                            title: result['custom-command'],
+                            task: result['custom-command'],
+                            directory: directory
+                        });
+                    } catch (e) {
+                        promptForAction();
+                    }
                 }
-            });
+            );
         },
 
-        executeShellCommand = function (command, directory) {
-            var commandWords = command.split(' '),
+        executeShellCommand = (command, directory) => {
+            const commandWords = command.split(' '),
                 commandName = commandWords[0],
                 commandArguments = commandWords.slice(1),
                 commandDirectory = getSpecificCommandDirectory(directory);
@@ -331,11 +331,15 @@ module.exports = (function () {
                 directory: commandDirectory
             };
 
-            currentCommandInstance = spawn(commandName, commandArguments, {
-                cwd: commandDirectory,
-                stdio: [0, 1, 2],
-                shell: true
-            });
+            currentCommandInstance = spawn(
+                commandName,
+                commandArguments,
+                {
+                    cwd: commandDirectory,
+                    stdio: [0, 1, 2],
+                    shell: true
+                }
+            );
 
             currentCommandInstance.on('close', finishUpWithCurrentCommand);
             bindKeyStrokesToQuitCurrentCommand();
@@ -343,13 +347,13 @@ module.exports = (function () {
 
         // Command abortion and clean-up
 
-        abortCurrentShellCommand = function () {
+        abortCurrentShellCommand = () => {
             currentCommandInstance.kill();
             currentCommandInstance = null;
         },
 
-        finishUpWithCurrentCommand = function () {
-            console.log('\n' + chalk.green(getSeparator('-')));
+        finishUpWithCurrentCommand = () => {
+            console.log(`\n${chalk.green(getSeparator('-'))}`);
 
             currentCommandInstance = null;
 
@@ -359,7 +363,7 @@ module.exports = (function () {
 
         // Exit
 
-        exit = function () {
+        exit = () => {
             clear();
             process.exit();
         };
