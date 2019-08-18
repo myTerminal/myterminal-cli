@@ -5,7 +5,7 @@
 const path = require('path'),
     os = require('os'),
     yargs = require('yargs').argv,
-    cliCompanion = require('./cli-modern');
+    cli = require('./cli');
 
 const common = require('./common');
 
@@ -21,5 +21,4 @@ const absoluteConfigPath = suppliedRelativeConfigPath
 common.copyConfigFileIfNotPresent();
 
 // Use configs and start the CLI
-cliCompanion.setConfigs(require(absoluteConfigPath));
-cliCompanion.init();
+cli.start(require(absoluteConfigPath));
