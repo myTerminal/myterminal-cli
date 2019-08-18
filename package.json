@@ -1,6 +1,6 @@
 {
   "name": "myterminal",
-  "version": "2.1.4",
+  "version": "2.2.0",
   "description": "An all-day command-line companion",
   "bin": {
     "myterminal": "bin/index.js",

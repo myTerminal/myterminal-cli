@@ -17,17 +17,17 @@ An all-day command-line companion
 
 ## What is it?
 
-*myterminal* is designed to be a command-line application that would help you perform repetitive tasks that you do all day long with the press of a single programmable key. It tends to be an interactive command-line interface that you would (hopefully) keep running in a terminal window on your workstation to perform a set of programmed tasks and present them to the user in a nested manner.
+*myterminal* is a command-line application created to help you perform repetitive tasks that you might be performing all day long with the press of a single programmable key. It tends to be an interactive command-line interface that you can keep running in a terminal window on your workstation to perform a set of programmed tasks and present via a menu-driven interface.
 
 ## Features
 
 * Configure long commands to be invoked with a single key-stroke
-* Nest similar or related commands in a menu
+* Nest similar or related commands in a menu-based hierarchy
 * Specify parameters for commands
 * Configure working directories for commands or a group of commands
 * Re-perform the last action with a *(\\)*
 * Re-run the last command with a *(.)*
-* Run a custom command, which can later become the 'last' command
+* Run a custom command, which can later also become the 'last' command
 
 ## Installation
 
@@ -41,11 +41,13 @@ Run `myterminal-cli` or simply `myterminal` from the command line passing it a p
 
     myterminal-cli --config=~/configs.json
 
-*myterminal* will start and the rest should be simple.
+*myterminal* will start and the rest should all be simple.
 
 You can also start *myterminal* without supplying the configuration file path, in which case it will start with a configuration file named *myterminal-configs.json* placed at your home (~/) directory. If the file does not exist, it will be created when the application is started for the first time.
 
-**Note:** Since the upgrade to version 2, *myterminal* uses an entirely new interface which does not work well on Windows. Hence *myterminal* starts in legacy mode in Windows, which means almost the same functionality, with the old interface.
+### Legacy Mode
+
+Since version 2, *myterminal* uses an entirely new interface which does not work well on Windows. Hence *myterminal* starts in the legacy mode in Windows, which means almost the same functionality, with the old interface.
 
 To force the modern mode in Windows, start *myterminal* as
 
@@ -55,6 +57,10 @@ and to force legacy mode on a *better* computer, start it as
 
     myterminal-cli --legacy
 
+**Note:** *Legacy mode is no longer available starting version 2.2.* If you need legacy mode, consider using older versions. One way of doing that is specifying the version during installation.
+
+    npm install -g myterminal@1.2
+
 ## Configuration
 
 The configuration file should contain a valid JSON. It consists of nodes having a *title* and a subtree called *commands*. Each of these nodes holds a group of commands. The tree contains a single character with which the group can be selected while the application is running. When a node has a property *task* instead of *commands*, it is treated as a command to be executed, rather than a group of commands.
@@ -62,15 +68,6 @@ The configuration file should contain a valid JSON. It consists of nodes having 
 Each command has a *title*, a *task* and optionally an array of *params*. These params are prompted to be entered by the user while executing the *task* and are appended to the task separated by spaces, in sequence as they appear in the *params* array to form the final command to be executed.
 
 Each of the items, be it a command or a group of commands, can have a defined *directory*, within which the command or the group of commands are executed. Note that when a *directory* is specified for a specific *task* and it also has a *directory* specified for the entire group containing the *task*, the *directory* for the *task* takes precedence.
-
-## Dependencies
-
-* [blessed](https://www.npmjs.com/package/blessed)
-* [yargs](https://www.npmjs.com/package/yargs)
-* [prompt](https://www.npmjs.com/package/prompt)
-* [clear](https://www.npmjs.com/package/clear)
-* [chalk](https://www.npmjs.com/package/chalk)
-* [fs-extra](https://www.npmjs.com/package/fs-extra)
 
 ## To-do
 

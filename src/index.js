@@ -4,22 +4,22 @@
 
 const path = require('path'),
     os = require('os'),
-    yargs = require('yargs').argv;
-
-const suppliedRelativeConfigPath = yargs.config;
-
-const defaultConfigFilePath = path.resolve(os.homedir(), 'myterminal-configs.json');
-
-const absoluteConfigPath = suppliedRelativeConfigPath
-    ? path.resolve(process.cwd(), suppliedRelativeConfigPath)
-    : defaultConfigFilePath;
+    yargs = require('yargs').argv,
+    cliCompanion = require('./cli-modern');
 
 const common = require('./common');
 
-const cliCompanion = !yargs.modern && (yargs.legacy || os.platform() === 'win32')
-    ? require('./cli-legacy')
-    : require('./cli-modern');
+// Get the supplied arguments
+const suppliedRelativeConfigPath = yargs.config;
 
+// Determine the config file path to use
+const absoluteConfigPath = suppliedRelativeConfigPath
+    ? path.resolve(process.cwd(), suppliedRelativeConfigPath)
+    : path.resolve(os.homedir(), 'myterminal-configs.json');
+
+// Create a config file if it does not exist
 common.copyConfigFileIfNotPresent();
+
+// Use configs and start the CLI
 cliCompanion.setConfigs(require(absoluteConfigPath));
 cliCompanion.init();
