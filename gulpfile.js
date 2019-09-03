@@ -1,4 +1,4 @@
-/* global require */
+/* global require module */
 
 const sourceDir = 'src',
     outputDir = 'bin';
@@ -10,9 +10,8 @@ const gulp = require('gulp'),
     gulpUglify = require('gulp-uglify'),
     gulpEslint = require('gulp-eslint');
 
-const clean = done => {
-    return del([outputDir], done);
-};
+const clean = done =>
+    del([outputDir], done);
 
 const scriptsDebug = () =>
     gulp.src(`${sourceDir}/**/*.js`)
@@ -56,11 +55,10 @@ const develop = () => {
     );
 };
 
-export {
+module.exports = {
     debug,
     build,
     develop,
-    lint
+    lint,
+    default: build
 };
-
-export default build;
