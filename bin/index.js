@@ -1,2 +1,0 @@
-#!/usr/bin/env node
-"use strict";var path=require("path"),os=require("os"),yargs=require("yargs").argv,cli=require("./cli"),common=require("./common"),suppliedRelativeConfigPath=yargs.config,absoluteConfigPath=suppliedRelativeConfigPath?path.resolve(process.cwd(),suppliedRelativeConfigPath):path.resolve(os.homedir(),"myterminal-configs.json");common.copyConfigFileIfNotPresent(),cli.start(require(absoluteConfigPath));
