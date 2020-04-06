@@ -6,6 +6,9 @@
     "myterminal": "bin/index.js",
     "myterminal-cli": "bin/index.js"
   },
+  "files": [
+    "/bin"
+  ],
   "scripts": {
     "gulp": "gulp"
   },
