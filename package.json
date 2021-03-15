@@ -1,5 +1,5 @@
 {
-  "name": "myterminal",
+  "name": "myterminal-cli",
   "version": "2.2.0",
   "description": "An all-day command-line companion",
   "bin": {
@@ -14,12 +14,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/myTerminal/myterminal.git"
+    "url": "git+https://github.com/myTerminal/myterminal-cli.git"
   },
   "bugs": {
-    "url": "https://github.com/myTerminal/myterminal/issues"
+    "url": "https://github.com/myTerminal/myterminal-cli/issues"
   },
-  "homepage": "https://github.com/myTerminal/myterminal#readme",
+  "homepage": "https://github.com/myTerminal/myterminal-cli#readme",
   "keywords": [
     "git"
   ],

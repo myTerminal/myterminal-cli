@@ -1,16 +1,16 @@
-# myterminal
+# myterminal-cli
 
-[![npm version](https://badge.fury.io/js/myterminal.svg)](https://badge.fury.io/js/myterminal)
-[![npm downloads](https://img.shields.io/npm/dt/myterminal.svg)](https://www.npmjs.com/package/myterminal)  
-[![Build Status](https://travis-ci.org/myTerminal/myterminal.svg?branch=master)](https://travis-ci.org/myTerminal/myterminal)
-[![Code Climate](https://codeclimate.com/github/myTerminal/myterminal.png)](https://codeclimate.com/github/myTerminal/myterminal)
+[![npm version](https://badge.fury.io/js/myterminal-cli.svg)](https://badge.fury.io/js/myterminal-cli)
+[![npm downloads](https://img.shields.io/npm/dt/myterminal-cli.svg)](https://www.npmjs.com/package/myterminal-cli)  
+[![Build Status](https://travis-ci.org/myTerminal/myterminal-cli.svg?branch=master)](https://travis-ci.org/myTerminal/myterminal-cli)
+[![Code Climate](https://codeclimate.com/github/myTerminal/myterminal-cli.png)](https://codeclimate.com/github/myTerminal/myterminal-cli)
 [![js-myterminal-style](https://img.shields.io/badge/code%20style-myterminal-blue.svg)](https://www.npmjs.com/package/eslint-config/myterminal)
-[![Coverage Status](https://img.shields.io/coveralls/myTerminal/myterminal.svg)](https://coveralls.io/r/myTerminal/myterminal?branch=master)  
-[![Dependency Status](https://david-dm.org/myTerminal/myterminal.svg)](https://david-dm.org/myTerminal/myterminal)
-[![devDependency Status](https://david-dm.org/myTerminal/myterminal/dev-status.svg)](https://david-dm.org/myTerminal/myterminal#info=devDependencies)
-[![peer Dependency Status](https://david-dm.org/myTerminal/myterminal/peer-status.svg)](https://david-dm.org/myTerminal/myterminal#info=peerDependencies)  
-[![License](https://img.shields.io/github/license/myTerminal/ample-alerts.svg)](https://opensource.org/licenses/MIT)  
-[![NPM](https://nodei.co/npm/myterminal.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/myterminal/)
+[![Coverage Status](https://img.shields.io/coveralls/myTerminal/myterminal-cli.svg)](https://coveralls.io/r/myTerminal/myterminal-cli?branch=master)  
+[![Dependency Status](https://david-dm.org/myTerminal/myterminal-cli.svg)](https://david-dm.org/myTerminal/myterminal-cli)
+[![devDependency Status](https://david-dm.org/myTerminal/myterminal-cli/dev-status.svg)](https://david-dm.org/myTerminal/myterminal-cli#info=devDependencies)
+[![peer Dependency Status](https://david-dm.org/myTerminal/myterminal-cli/peer-status.svg)](https://david-dm.org/myTerminal/myterminal-cli#info=peerDependencies)  
+[![License](https://img.shields.io/github/license/myTerminal/myterminal-cli.svg)](https://opensource.org/licenses/MIT)  
+[![NPM](https://nodei.co/npm/myterminal-cli.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/myterminal-cli/)
 
 An all-day command-line companion
 
@@ -18,7 +18,7 @@ An all-day command-line companion
 
 ## What is it?
 
-*myterminal* is a command-line application created to help you perform repetitive tasks that you might be performing all day long with the press of a single programmable key. It tends to be an interactive command-line interface that you can keep running in a terminal window on your workstation to perform a set of programmed tasks and present via a menu-driven interface.
+*myterminal-cli* is a command-line application created to help you perform repetitive tasks that you might be performing all day long with the press of a single programmable key. It tends to be an interactive command-line interface that you can keep running in a terminal window on your workstation to perform a set of programmed tasks and present via a menu-driven interface.
 
 ## Features
 
@@ -32,9 +32,9 @@ An all-day command-line companion
 
 ## Installation
 
-*myterminal* is available on *Npm*. You can install it globally with a simple command.
+*myterminal-cli* is available on *Npm*. You can install it globally with a simple command.
 
-    npm install -g myterminal
+    npm install -g myterminal-cli
 
 ## How to Use
 
@@ -42,15 +42,15 @@ Run `myterminal-cli` or simply `myterminal` from the command line passing it a p
 
     myterminal-cli --config=~/configs.json
 
-*myterminal* will start and the rest should all be simple.
+*myterminal-cli* will start and the rest should all be simple.
 
-You can also start *myterminal* without supplying the configuration file path, in which case it will start with a configuration file named *myterminal-configs.json* placed at your home (~/) directory. If the file does not exist, it will be created when the application is started for the first time.
+You can also start *myterminal-cli* without supplying the configuration file path, in which case it will start with a configuration file named *myterminal-configs.json* placed at your home (~/) directory. If the file does not exist, it will be created when the application is started for the first time.
 
 ### Legacy Mode
 
-Since version 2, *myterminal* uses an entirely new interface which does not work well on Windows. Hence *myterminal* starts in the legacy mode in Windows, which means almost the same functionality, with the old interface.
+Since version 2, *myterminal-cli* uses an entirely new interface which does not work well on Windows. Hence *myterminal-cli* starts in the legacy mode in Windows, which means almost the same functionality, with the old interface.
 
-To force the modern mode in Windows, start *myterminal* as
+To force the modern mode in Windows, start *myterminal-cli* as
 
     myterminal-cli --modern
 
@@ -60,7 +60,7 @@ and to force legacy mode on a *better* computer, start it as
 
 **Note:** *Legacy mode is no longer available starting version 2.2.* If you need legacy mode, consider using older versions. One way of doing that is specifying the version during installation.
 
-    npm install -g myterminal@1.2
+    npm install -g myterminal-cli@1.2
 
 ## Configuration
 
