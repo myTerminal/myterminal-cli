@@ -44,7 +44,7 @@ Run `myterminal-cli` or simply `myterminal` from the command line passing it a p
 
 *myterminal-cli* will start and the rest should all be simple.
 
-You can also start *myterminal-cli* without supplying the configuration file path, in which case it will start with a configuration file named *myterminal-configs.json* placed at your home (~/) directory. If the file does not exist, it will be created when the application is started for the first time.
+You can also start *myterminal-cli* without supplying the configuration file path, in which case it will start with a configuration file named *myterminal-cli-configs.json* placed at your home (~/) directory. If the file does not exist, it will be created when the application is started for the first time.
 
 ### Legacy Mode
 

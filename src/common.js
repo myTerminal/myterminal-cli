@@ -3,7 +3,7 @@
 const path = require('path'),
     os = require('os'),
     fse = require('fs-extra'),
-    defaultConfigFilePath = path.resolve(os.homedir(), 'myterminal-configs.json');
+    defaultConfigFilePath = path.resolve(os.homedir(), 'myterminal-cli-configs.json');
 
 module.exports.copyConfigFileIfNotPresent = () => {
     fse.copySync(
