@@ -1,15 +1,12 @@
 # myterminal-cli
 
 [![npm version](https://badge.fury.io/js/myterminal-cli.svg)](https://badge.fury.io/js/myterminal-cli)
-[![npm downloads](https://img.shields.io/npm/dt/myterminal-cli.svg)](https://www.npmjs.com/package/myterminal-cli)  
+[![npm downloads](https://img.shields.io/npm/dt/myterminal-cli.svg)](https://www.npmjs.com/package/myterminal-cli)
+[![License](https://img.shields.io/github/license/myTerminal/myterminal-cli.svg)](https://opensource.org/licenses/MIT)  
 [![Build Status](https://travis-ci.org/myTerminal/myterminal-cli.svg?branch=master)](https://travis-ci.org/myTerminal/myterminal-cli)
 [![Code Climate](https://codeclimate.com/github/myTerminal/myterminal-cli.png)](https://codeclimate.com/github/myTerminal/myterminal-cli)
 [![js-myterminal-style](https://img.shields.io/badge/code%20style-myterminal-blue.svg)](https://www.npmjs.com/package/eslint-config/myterminal)
 [![Coverage Status](https://img.shields.io/coveralls/myTerminal/myterminal-cli.svg)](https://coveralls.io/r/myTerminal/myterminal-cli?branch=master)  
-[![Dependency Status](https://david-dm.org/myTerminal/myterminal-cli.svg)](https://david-dm.org/myTerminal/myterminal-cli)
-[![devDependency Status](https://david-dm.org/myTerminal/myterminal-cli/dev-status.svg)](https://david-dm.org/myTerminal/myterminal-cli#info=devDependencies)
-[![peer Dependency Status](https://david-dm.org/myTerminal/myterminal-cli/peer-status.svg)](https://david-dm.org/myTerminal/myterminal-cli#info=peerDependencies)  
-[![License](https://img.shields.io/github/license/myTerminal/myterminal-cli.svg)](https://opensource.org/licenses/MIT)  
 [![NPM](https://nodei.co/npm/myterminal-cli.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/myterminal-cli/)
 
 An all-day command-line companion
